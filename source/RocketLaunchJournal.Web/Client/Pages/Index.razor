@@ -1,0 +1,43 @@
+﻿@page "/"
+
+<div class="row">
+  <div class="col-sm-6">
+    <h3>Recent Launches</h3>
+  </div>
+  <div class="col-sm-6 text-right">
+  </div>
+</div>
+
+@if (list == null)
+{
+  <p><em>Loading...</em></p>
+}
+else
+{
+  <SmartishTable.Root SafeList="list" @ref="launchTable">
+    <div class="form-row">
+      <SmartishTable.Repeater TItem="LaunchDto" Context="row">
+        <LaunchCard Dto="row.Item" AddEditAsync="AddEditLaunchAsync" Index="row.Index"></LaunchCard>
+      </SmartishTable.Repeater>
+    </div>
+  </SmartishTable.Root>
+}
+
+@inject IModalService ModalService
+@inject AnonymousClient anonymousClient
+@code {
+
+    private List<LaunchDto>? list;
+
+    private SmartishTable.Root<LaunchDto> launchTable;
+
+    protected async override Task OnInitializedAsync()
+    {
+      list = await anonymousClient.GetRecentLaunches();
+    }
+
+    protected async Task AddEditLaunchAsync(int index)
+    {
+      await AddEdit.AddEditLaunchAsync(ModalService, launchTable, index);
+    }
+}

@@ -1,0 +1,114 @@
+﻿@typeparam T
+@inherits InputBase<T>
+
+<div class="form-group form-row">
+  <label for="@($"{_predicate}{nameSuffix}")" class="col-form-label @LabelCss">
+    <DefaultLabel Name=@PropertyReflections.GetLabelName(PropertyInfo) IsRequired="@PropertyReflections.IsRequired(PropertyInfo)"></DefaultLabel>
+    <InputUnsavedChangesNotifcation Value="@(!OldValue.Equals(CurrentValue))" />
+  </label>
+  <div class="col-sm">
+    <select @bind="CurrentValueAsString" id="@($"{_predicate}{nameSuffix}")" type="text" class="form-control @CssClass">
+      @ChildContent
+    </select>
+    @if (ValidationFor != null)
+    {
+<ValidationMessage For="@ValidationFor" />}
+  </div>
+</div>
+
+@code { [Parameter] public string LabelCss { get; set; } = "col-sm-3";
+
+      [Parameter]
+      public System.Reflection.PropertyInfo PropertyInfo { get; set; } = default!;
+
+      [Parameter]
+      public System.Linq.Expressions.Expression<Func<T>>? ValidationFor { get; set; }
+
+      [Parameter]
+      public RenderFragment ChildContent { get; set; }
+
+      private T oldValue;
+      [Parameter]
+      public T OldValue
+      {
+        get { return oldValue; }
+        set
+        {
+        oldValueAssigned = true;
+          oldValue = value;
+        }
+      }
+      private bool oldValueAssigned;
+
+      private string? _predicate;
+
+      private string nameSuffix = DateTime.UtcNow.Ticks.ToString();
+
+      protected override void OnInitialized()
+      {
+      if (!oldValueAssigned)
+          OldValue = Value;
+        _predicate = PropertyInfo.Name;
+      }
+
+      protected override void OnParametersSet()
+      {
+      }
+
+      protected override bool TryParseValueFromString(string value, out T result, out string validationErrorMessage)
+      {
+        var type = typeof(T);
+        var underlyingType = Nullable.GetUnderlyingType(type);
+        if (type == typeof(string))
+        {
+          result = (T)(object)value;
+          validationErrorMessage = null;
+
+          return true;
+        }
+        else if (type == typeof(byte))
+        {
+          byte.TryParse(value, out var parsedValue);
+          result = (T)(object)parsedValue;
+          validationErrorMessage = null;
+
+          return true;
+        }
+        else if (type == typeof(int))
+        {
+          int.TryParse(value, out var parsedValue);
+          result = (T)(object)parsedValue;
+          validationErrorMessage = null;
+
+          return true;
+        }
+        else if (type == typeof(Guid))
+        {
+          Guid.TryParse(value, out var parsedValue);
+          result = (T)(object)parsedValue;
+          validationErrorMessage = null;
+
+          return true;
+        }
+        else if (type.IsEnum || underlyingType?.IsEnum == true)
+        {
+          try
+          {
+            if (underlyingType != null)
+              result = (T)Enum.Parse(underlyingType, value);
+            else
+              result = (T)Enum.Parse(type, value);
+            validationErrorMessage = null;
+            return true;
+          }
+          catch (ArgumentException ex)
+          {
+            result = default;
+            validationErrorMessage = null;// $"The {FieldIdentifier.FieldName} field is not valid.";
+
+            return true;
+          }
+        }
+
+        throw new InvalidOperationException($"{GetType()} does not support the type '{type}'.");
+      } }

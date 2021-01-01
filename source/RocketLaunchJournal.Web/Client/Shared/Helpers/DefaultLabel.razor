@@ -1,0 +1,16 @@
+﻿@if (IsRequired && SuppressRequired != true)
+{
+<RequiredField />
+}
+@Name
+
+@code {
+    [Parameter]
+    public string Name { get; set; } = string.Empty;
+
+    [Parameter]
+    public bool IsRequired { get; set; }
+
+    [Parameter]
+    public bool? SuppressRequired { get; set; }
+}

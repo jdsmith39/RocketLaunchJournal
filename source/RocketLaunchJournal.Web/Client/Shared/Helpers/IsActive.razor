@@ -1,0 +1,21 @@
+﻿<span class="@css" ></span>
+
+@code {
+    [Parameter]
+    public bool Value { get; set; }
+
+    private string css = "";
+
+    protected override void OnParametersSet()
+    {
+      css = "far ";
+      if (Value)
+      {
+        css += "fa-check-square text-success";
+      }
+      else
+      {
+        css += "fa-square text-warning";
+      }
+    }
+}

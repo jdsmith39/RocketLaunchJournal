@@ -1,0 +1,41 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+
+  <ul class="navbar-nav">
+    <AuthorizeView>
+      <Authorized>
+        <li class="nav-item dropdown">
+          <button class="btn btn-link nav-link dropdown-toggle" @onclick="ToggleProfileMenu">@context.User.Identity.Name</button>
+          <div class="dropdown-menu dropdown-menu-right @profileCss" aria-labelledby="profileLink">
+            <a class="dropdown-item" href="authentication/profile"><i class="fas fa-user fa-fw"></i> Profile</a>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item" @onclick="BeginSignOut"><i class="fas fa-sign-out-alt fa-fw"></i> Log out</button>
+          </div>
+        </li>
+      </Authorized>
+      <NotAuthorized>
+        @*<li class="nav-item"><a href="authentication/register" class="nav-link"><i class="fas fa-user-plus fa-fw"></i> Register</a></li>*@
+        <li class="nav-item"><a href="authentication/login" class="nav-link"><i class="fas fa-sign-in-alt fa-fw"></i> Log in</a></li>
+      </NotAuthorized>
+    </AuthorizeView>
+  </ul>
+
+  @code{
+      private async Task BeginSignOut(MouseEventArgs args)
+      {
+        await SignOutManager.SetSignOutState();
+        Navigation.NavigateTo("authentication/logout");
+      }
+
+      private bool collapseProfileMenu = true;
+
+      private string? profileCss => collapseProfileMenu ? null : "show";
+
+      private void ToggleProfileMenu()
+      {
+        collapseProfileMenu = !collapseProfileMenu;
+      }
+  }

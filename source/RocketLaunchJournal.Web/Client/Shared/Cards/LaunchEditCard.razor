@@ -1,0 +1,70 @@
+﻿<div class="col-12 mb-2">
+  <div class="card @(showAll ? "bg-light" : "")">
+    <div class="card-header" title="@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.LaunchNumber)) - @PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Date))">
+      <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.LaunchAddEditDelete"> 
+        <Authorized Context="AuthorizedContext">
+          @if (userInfo.UserId == Dto.UserId)
+          {
+            <button class="btn btn-sm btn-link" @onclick="@(() => AddEditAsync.InvokeAsync(Index))"><span class="fa fa-edit"></span> @Header</button>
+          }
+          else
+          {
+            <text>
+              @Header
+            </text>
+          }
+        </Authorized>
+        <NotAuthorized Context="NotAuthorizedContext">
+          @Header
+        </NotAuthorized>
+      </AuthorizeView>
+    </div>
+    <div class="card-body canSelect" @onclick="@(() => showAll =!showAll)">
+      <div class="card-text">
+        <EditCardRow DtoProperties="dtoProperties" IsBold="true" PropertyName="@nameof(LaunchDto.Motors)" Value="@Dto.Motors"></EditCardRow>
+        <EditCardRow DtoProperties="dtoProperties" IsBold="true" PropertyName="@nameof(LaunchDto.Altitude)" Value="@Dto.Altitude" Unit="ft"></EditCardRow>
+        <EditCardRow DtoProperties="dtoProperties" IsBold="true" PropertyName="@nameof(LaunchDto.TopSpeed)" Value="@Dto.TopSpeed" Unit="mph"></EditCardRow>
+        @if (showAll)
+        {
+          <EditCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.BurnTime)" Value="@Dto.BurnTime" Unit="s"></EditCardRow>
+          <EditCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.PeakAcceleration)" Value="@Dto.PeakAcceleration" Unit="g"></EditCardRow>
+          <EditCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.AverageAcceleration)" Value="@Dto.AverageAcceleration" Unit="g"></EditCardRow>
+          <EditCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.CoastToApogeeTime)" Value="@Dto.CoastToApogeeTime" Unit="s"></EditCardRow>
+          <EditCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.ApogeeToEjectionTime)" Value="@Dto.ApogeeToEjectionTime" Unit="s"></EditCardRow>
+          <EditCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.EjectionAltitude)" Value="@Dto.EjectionAltitude" Unit="ft"></EditCardRow>
+          <EditCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.DescentSpeed)" Value="@Dto.DescentSpeed" Unit="s"></EditCardRow>
+          <EditCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.Duration)" Value="@Dto.Duration" Unit="s"></EditCardRow>
+          <div>@Dto.Note</div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+@code {
+    [Parameter]
+    public LaunchDto Dto { get; set; }
+
+    [Parameter]
+    public int Index { get; set; }
+
+    [Parameter]
+    public EventCallback<int> AddEditAsync { get; set; }
+
+    private List<System.Reflection.PropertyInfo> dtoProperties = PropertyReflections.LaunchDtoProperties;
+
+    private bool showAll = false;
+
+    private RocketLaunchJournal.Web.Shared.UserIdentity.UserClaimBuilder userInfo;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+    private string Header { get { return $"Launch #{Dto.LaunchNumber} - {Dto.Date.ToShortDateString()}"; } }
+
+    protected async override Task OnInitializedAsync()
+    {
+      var authState = await authenticationStateTask;
+      userInfo = new RocketLaunchJournal.Web.Shared.UserIdentity.UserClaimBuilder(authState.User);
+    }
+}

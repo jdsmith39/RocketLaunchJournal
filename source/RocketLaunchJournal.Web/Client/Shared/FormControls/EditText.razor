@@ -1,0 +1,50 @@
+﻿@inherits InputBase<string>
+
+<div class="form-group form-row">
+  <label for="@($"{_predicate}{nameSuffix}")" class="col-form-label @LabelCss">
+    <DefaultLabel Name=@PropertyReflections.GetLabelName(PropertyInfo) IsRequired="@PropertyReflections.IsRequired(PropertyInfo)"></DefaultLabel>
+    <InputUnsavedChangesNotifcation Value="@(OldValue != CurrentValue)" />
+  </label>
+  <div class="col-sm">
+    <input @bind="CurrentValue" id="@($"{_predicate}{nameSuffix}")" type="text" class="form-control @CssClass" />
+    @if (ValidationFor != null)
+    {
+  <ValidationMessage For="@ValidationFor" />}
+  </div>
+</div>
+
+@code {
+
+    [Parameter] public string LabelCss { get; set; } = "col-sm-3";
+
+    [Parameter]
+    public System.Reflection.PropertyInfo PropertyInfo { get; set; } = default!;
+
+    [Parameter]
+    public System.Linq.Expressions.Expression<Func<string>>? ValidationFor { get; set; }
+
+    private string? _predicate;
+
+    private string nameSuffix = DateTime.UtcNow.Ticks.ToString();
+
+    [Parameter]
+    public string? OldValue { get; set; }
+
+    protected override void OnInitialized()
+    {
+      if (OldValue == null)
+        OldValue = Value;
+      _predicate = PropertyInfo.Name;
+    }
+
+    protected override void OnParametersSet()
+    {
+    }
+
+    protected override bool TryParseValueFromString(string value, out string result, out string? validationErrorMessage)
+    {
+      result = value;
+      validationErrorMessage = null;
+      return true;
+    }
+}

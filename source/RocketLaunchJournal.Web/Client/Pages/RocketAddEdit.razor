@@ -1,0 +1,89 @@
+﻿<div class="modal-backdrop fade show"></div>
+<div class="modal fade show d-block" style="pointer-events: none;" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="col"><h5 class="modal-title">@BlazoredModal.Title</h5></div>
+        <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
+        <button type="button" class="close" aria-label="Close" @onclick="BlazoredModal.Cancel">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <EditForm EditContext="_editContext" OnValidSubmit="Save">
+        <div class="modal-body">
+          <DataAnnotationsValidator />
+          <ValidationSummary />
+          <div class="form-horizontal">
+            <EditText @bind-Value="Dto.Name" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.Name))" ValidationFor="(() => Dto.Name)" />
+            <EditNumber @bind-Value="Dto.Length" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.Length))" ValidationFor="(() => Dto.Length)" />
+            <EditNumber @bind-Value="Dto.Diameter" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.Diameter))" ValidationFor="(() => Dto.Diameter)" />
+            <EditNumber @bind-Value="Dto.Weight" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.Weight))" ValidationFor="(() => Dto.Weight)" />
+            <EditText @bind-Value="Dto.Recovery" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.Recovery))" ValidationFor="(() => Dto.Recovery)" />
+            <EditNumber @bind-Value="Dto.BlackPowderForApogee" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.BlackPowderForApogee))" ValidationFor="(() => Dto.BlackPowderForApogee)" />
+            <EditNumber @bind-Value="Dto.BlackPowderForMain" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.BlackPowderForMain))" ValidationFor="(() => Dto.BlackPowderForMain)" />
+
+            <EditCheckbox @bind-Value="@Dto.IsActive" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.IsActive))" />
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
+          <div class="col text-right"><ModalDefaultFooterButtons OnCancel="BlazoredModal.Cancel" /></div>
+        </div>
+      </EditForm>
+    </div>
+  </div>
+</div>
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject IModalService ModalService
+@inject AuthorizedClient authorizedClient
+@code {
+
+    [CascadingParameter]
+    private BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public RocketLaunchJournal.Infrastructure.Dtos.RocketDto DtoOriginal { get; set; } = default!;
+
+    private RocketLaunchJournal.Infrastructure.Dtos.RocketDto Dto { get; set; } = default!;
+
+  private EditContext _editContext = default!;
+
+  private bool dataUpdated
+  {
+    get
+    {
+      return !Dto.Equals(DtoOriginal);
+    }
+  }
+
+  protected async override Task OnInitializedAsync()
+  {
+    if (DtoOriginal == null)
+    {
+      DtoOriginal = new Infrastructure.Dtos.RocketDto()
+      {
+        IsActive = true,
+        IsUpdated = true,
+      };
+    }
+
+    Dto = DtoOriginal.SerializeJson().DeserializeJson<RocketLaunchJournal.Infrastructure.Dtos.RocketDto>();
+
+    _editContext = new EditContext(Dto);
+  }
+
+  async Task Save()
+  {
+    Dto.IsUpdated = dataUpdated;
+    if (Dto.IsUpdated)
+    {
+      var data = await authorizedClient.SaveRocket(Dto);
+      if (data != null)
+        await BlazoredModal.Close(ModalResult.Ok(data));
+    }
+  }
+}

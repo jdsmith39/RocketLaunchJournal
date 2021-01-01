@@ -1,0 +1,40 @@
+﻿@inherits InputBase<bool>
+
+<div class="form-group form-row">
+  <div class="offset-sm-3 col-sm-9">
+    <div class="form-check">
+      <label class="form-check-label">
+        <input @bind="CurrentValue" type="checkbox" class="form-check-input @CssClass" />
+        @PropertyReflections.GetLabelName(PropertyInfo)
+        <InputUnsavedChangesNotifcation Value="@(originalValue != CurrentValue)" />
+      </label>
+    </div>
+  </div>
+</div>
+
+@code { [Parameter]
+    public System.Reflection.PropertyInfo PropertyInfo { get; set; } = default!;
+
+    private bool originalValue;
+    private bool? oldValue;
+    [Parameter]
+    public bool? OldValue
+    {
+      get { return oldValue; }
+      set
+      {
+        if (value.HasValue)
+          originalValue = value.Value;
+        oldValue = value;
+      }
+    }
+
+    protected override void OnInitialized()
+    {
+      if (!OldValue.HasValue)
+        originalValue = Value;
+    }
+
+    protected override bool TryParseValueFromString(string? value, out bool result, [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage)
+        => throw new NotSupportedException($"This component does not parse string inputs. Bind to the '{nameof(CurrentValue)}' property, not '{nameof(CurrentValueAsString)}'.");
+    } 

@@ -1,0 +1,63 @@
+RocketID,IsActive,Name,NumberOfLaunches,Weight
+1,True,Blackbird,17,99.000
+2,True,Pathfinder,8,110.400
+3,True,Loc IV,13,899.000
+4,True,Optima,14,292.000
+5,True,Super Vega 2.6in,0,
+6,True,Prowler,2,122.550
+7,True,Satellite,9,75.200
+8,True,Long Shot,0,172.600
+9,False,Phoenix 4in,8,1388.000
+10,True,Dasher,10,35.500
+11,False,Big Al,4,1119.000
+12,True,Phoenix 2.6in,13,201.400
+13,True,Ariel,3,1329.000
+14,True,Warp II,1,
+15,True,Swat,7,139.800
+16,True,Meanie,7,13.000
+17,True,Mini Mean Machine,9,27.600
+18,True,Mirage,4,935.000
+19,True,Dart,12,54.400
+20,True,Wildfire,17,54.000
+21,True,Cirrus Dart,0,526.000
+22,True,Bruiser EXP,0,
+23,True,Fat Boy,6,99.000
+24,True,Falcon,4,1235.000
+25,True,Transtar,9,58.900
+26,True,Rain Maker,11,37.600
+27,True,Sentinel,8,93.600
+28,True,"Magnum, Estes",3,122.000
+29,True,Initiator,12,471.000
+30,True,Firehawk,12,117.000
+31,True,Flash,4,68.400
+32,True,Mini Mars Lander,9,24.600
+33,True,Strike Fighter,6,72.100
+34,True,The Hog,2,604.000
+35,False,I-Roc,2,
+36,True,Super Nova,2,211.000
+37,True,Arcus 4in,5,1783.000
+38,True,Nighthawk,1,1524.000
+39,True,"Wildfire, 2nd",4,56.900
+40,True,Small Endeavor,3,957.000
+41,True,Moonblaster,9,98.000
+42,True,Rampage,22,159.800
+43,False,Python,5,182.000
+44,False,Nova,12,31.600
+45,True,A.R.V. Condor,7,57.200
+46,False,Arreaux,8,375.700
+47,True,Big Bertha,9,104.000
+48,True,"Magnum, Loc",12,3808.000
+49,True,Stealth,7,76.100
+50,True,Heliocopter,6,125.400
+51,False,Shadow,5,303.000
+52,True,Mean Machine,3,245.000
+53,False,Hijax,2,53.150
+54,True,Nimbus,6,37.600
+55,True,Transwing,5,118.900
+56,False,Sizziler,3,138.900
+57,True,Arcus 2.6in,16,705.000
+58,True,Super Vega 1.6in,8,174.000
+60,True,Prospector,0,66.000
+61,True,Hyper Bat,0,54.000
+62,True,Nike Smoke,1,550.000
+63,True,"Big Al, Rev2",0,1236.000

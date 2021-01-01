@@ -1,0 +1,13 @@
+﻿<button type="submit" class="btn btn-primary mr-2" accesskey="S"><i class="far fa-save"></i> Save</button>
+<button type="button" class="btn btn-outline-warning" @onclick="@(e => OnCancel())" accesskey="C"><i class="fas fa-window-close"></i> Cancel</button>
+
+@code {
+    [Parameter]
+    public Func<Task> OnCancel { get; set; }
+
+    protected override void OnInitialized()
+    {
+      if (OnCancel == null)
+        throw new ArgumentNullException(nameof(OnCancel));
+    }
+}

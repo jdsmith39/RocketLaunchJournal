@@ -1,0 +1,82 @@
+﻿@page "/users"
+
+<div class="row">
+  <div class="col-sm-6">
+    <h3>Users</h3>
+  </div>
+  <div class="col-sm-6 text-right">
+    <button type="button" class="btn btn-primary" @onclick="@(() => AddEditAsync(-1))" accesskey="A"><i class="fas fa-plus"></i> Add New</button>
+  </div>
+</div>
+
+@if (list == null)
+{
+  <p><em>Loading...</em></p>
+}
+else
+{
+<SmartishTable.Root SafeList="list" @ref="table">
+  <table class="table table-condensed table-striped">
+    <thead>
+      <tr>
+        <th>@PropertyReflections.GetLabelName(dtoProperties, nameof(UserDto.Email))</th>
+        <th>@PropertyReflections.GetLabelName(dtoProperties, nameof(UserDto.FirstName))</th>
+        <th>@PropertyReflections.GetLabelName(dtoProperties, nameof(UserDto.LastName))</th>
+        <th>@PropertyReflections.GetLabelName(dtoProperties, nameof(UserDto.IsActive))</th>
+      </tr>
+    </thead>
+    <tbody>
+      <SmartishTable.Repeater TItem="UserDto" Context="row">
+        <tr>
+          <td><button class="btn btn-sm btn-link" @onclick="@(() => AddEditAsync(row.Index))"><span class="fa fa-edit"></span> @row.Item.Email</button></td>
+          <td>@row.Item.FirstName</td>
+          <td>@row.Item.LastName</td>
+          <td><IsActive Value="@row.Item.IsActive" /></td>
+        </tr>
+      </SmartishTable.Repeater>
+    </tbody>
+  </table>
+</SmartishTable.Root>
+}
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using RocketLaunchJournal.Web.Shared.UserIdentity.Policies
+@using RocketLaunchJournal.Infrastructure.Dtos.Users
+@attribute [Authorize(Policy = PolicyNames.UserAddEditDelete)]
+
+@inject AuthorizedClient authorizedClient
+@inject IModalService ModalService
+@code {
+    private List<RocketLaunchJournal.Infrastructure.Dtos.Users.UserDto> list;
+
+    private List<System.Reflection.PropertyInfo> dtoProperties;
+
+    private SmartishTable.Root<UserDto> table;
+
+    protected override async Task OnInitializedAsync()
+    {
+      dtoProperties = typeof(UserDto).GetProperties().ToList();
+      list = await authorizedClient.GetUsers();
+    }
+
+    protected async Task AddEditAsync(int index)
+    {
+      var isNew = index == -1;
+      UserDto? dto = null;
+      if (!isNew)
+        dto = table.GetAt(index);
+      var parameters = new Blazored.Modal.ModalParameters();
+      parameters.Add(nameof(UserAddEdit.DtoOriginal), dto);
+      var modalReference = ModalService.Show<UserAddEdit>("User Add/Edit", parameters, new ModalOptions() { });
+      var modalResult = await modalReference.Result;
+      dto = modalResult.Data as UserDto;
+      if (dto != null)
+      {
+        if (isNew)
+          await table.Add(dto);
+        else
+          await table.UpdateAt(index, dto);
+      }
+    }
+}

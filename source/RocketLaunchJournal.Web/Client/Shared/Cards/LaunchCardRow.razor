@@ -1,0 +1,28 @@
+﻿<div class="hover form-row" title="@PropertyReflections.GetLabelName(DtoProperties, PropertyName)">
+  <div class="col-4 col-xl-5">@PropertyReflections.GetLabelName(DtoProperties, PropertyName, true) </div>
+  <div class="col">
+    <span class="@(IsBold ? "font-weight-bold": "")">
+      @Value @GetUnit
+    </span>
+  </div>
+</div>
+
+@typeparam T
+@code {
+  [Parameter]
+  public string PropertyName { get; set; } = default!;
+
+  [Parameter]
+  public List<System.Reflection.PropertyInfo> DtoProperties { get; set; } = default!;
+
+  [Parameter]
+  public bool IsBold { get; set; } = false;
+
+  [Parameter]
+  public T Value { get; set; } = default!;
+
+  [Parameter]
+  public string? Unit { get; set; }
+
+  private string GetUnit { get { return Value == null || string.IsNullOrEmpty(Unit) ? "" : Unit; } }
+}

@@ -1,0 +1,13 @@
+﻿@if (Value)
+{
+  <h6 class="invalid-feedback d-block mt-2">
+    <span class="fas fa-circle text-danger"> </span>
+    <strong> Unsaved changes</strong>
+  </h6>
+}
+
+@code {
+
+  [Parameter]
+  public bool Value { get; set; }
+}

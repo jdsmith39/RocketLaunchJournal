@@ -1,0 +1,215 @@
+@page "/launches"
+
+<div class="row">
+  <div class="col-sm-6">
+    <h3>Launches</h3>
+  </div>
+  <div class="col-sm-6 text-right">
+    <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.LaunchAddEditDelete">
+      <button type="button" class="btn btn-primary" @onclick="@(() => AddEditAsync(-1))" accesskey="A"><i class="fas fa-plus"></i> Add New</button>
+    </AuthorizeView>
+  </div>
+</div>
+
+@if (list == null)
+{
+  <p><em>Loading...</em></p>
+}
+else
+{
+  <SmartishTable.Root SafeList="list" @ref="launchTable" MaxNumberOfSorts="2">
+    <table class="table table-condensed table-striped">
+      <thead>
+        <tr>
+          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.Name" IsDefaultSort="true" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Name))</SmartishTable.Sort>
+          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.LaunchNumber" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.LaunchNumber))</SmartishTable.Sort>
+          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.Date" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Date))</SmartishTable.Sort>
+          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.Motors" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Motors))</SmartishTable.Sort>
+          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.Altitude" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Altitude))</SmartishTable.Sort>
+          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.TopSpeed" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.TopSpeed))</SmartishTable.Sort>
+        </tr>
+        <tr>
+          <td>
+            <select @bind="nameOperator" class="form-control form-control-sm">
+              @foreach (var item in SmartishTable.Filters.StringOperators.Equals.GetList())
+              {
+                <option value="@item">@item.GetDisplayName()</option>
+              }
+            </select>
+            <SmartishTable.FilterString TItem="LaunchDto" Field="x=>x.Name" Context="filterContext" Operator="nameOperator">
+              <input type="text" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            </SmartishTable.FilterString>
+          </td>
+          <td>
+            <select @bind="launchNumberOperator" class="form-control form-control-sm">
+              @foreach (var item in SmartishTable.Filters.NumericOperators.Equals.GetList())
+              {
+                <option value="@item">@item.GetDisplayName()</option>
+              }
+            </select>
+            <SmartishTable.FilterNumeric TItem="LaunchDto" Field="x=>x.LaunchNumber" Context="filterContext" Operator="launchNumberOperator" FilterType="int?">
+              <input type="number" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            </SmartishTable.FilterNumeric>
+          </td>
+          <td>
+            <select @bind="launchDateOperator" class="form-control form-control-sm">
+              @foreach (var item in SmartishTable.Filters.DateTimeOperators.Equals.GetList())
+              {
+                <option value="@item">@item.GetDisplayName()</option>
+              }
+            </select>
+            <SmartishTable.FilterDateTime TItem="LaunchDto" Field="x=>x.Date" Context="filterContext" Operator="launchDateOperator">
+              <input type="date" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            </SmartishTable.FilterDateTime>
+          </td>
+          <td>
+            <select @bind="motorsOperator" class="form-control form-control-sm">
+              @foreach (var item in SmartishTable.Filters.StringOperators.Equals.GetList())
+              {
+                <option value="@item">@item.GetDisplayName()</option>
+              }
+            </select>
+            <SmartishTable.FilterString TItem="LaunchDto" Field="x=>x.Motors" Context="filterContext" Operator="motorsOperator">
+              <input type="text" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            </SmartishTable.FilterString>
+          </td>
+          <td>
+            <select @bind="altitudeOperator" class="form-control form-control-sm">
+              @foreach (var item in SmartishTable.Filters.NumericOperators.Equals.GetList())
+              {
+                <option value="@item">@item.GetDisplayName()</option>
+              }
+            </select>
+            <SmartishTable.FilterNumeric TItem="LaunchDto" Field="x=>x.Altitude" Context="filterContext" Operator="altitudeOperator" FilterType="decimal?">
+              <input type="number" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            </SmartishTable.FilterNumeric>
+          </td>
+          <td>
+            <select @bind="topSpeedOperator" class="form-control form-control-sm">
+              @foreach (var item in SmartishTable.Filters.NumericOperators.Equals.GetList())
+              {
+                <option value="@item">@item.GetDisplayName()</option>
+              }
+            </select>
+            <SmartishTable.FilterNumeric TItem="LaunchDto" Field="x=>x.TopSpeed" Context="filterContext" Operator="topSpeedOperator" FilterType="decimal?">
+              <input type="number" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            </SmartishTable.FilterNumeric>
+          </td>
+        </tr>
+      </thead>
+      <tbody>
+        <SmartishTable.Repeater TItem="LaunchDto" Context="row">
+          <tr>
+            <td>
+              <button type="button" class="btn btn-sm btn-outline-info" @onclick="(() => row.Item.ShowDetails = !row.Item.ShowDetails)" aria-controls="filters">
+                <i class="fas fa-fw @(row.Item.ShowDetails ? "fa-chevron-down":"fa-chevron-right")"></i>
+              </button>
+              <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.LaunchAddEditDelete">
+                <Authorized>
+                  @if (userInfo.UserId == row.Item.UserId)
+                  {
+                    <button class="btn btn-sm btn-link" @onclick="@(() => AddEditAsync(row.Index))"><span class="fa fa-edit"></span> @row.Item.Name</button>
+                  }
+                  else
+                  {
+                    <text>@row.Item.Name</text>
+                  }
+                </Authorized>
+                <NotAuthorized>
+                  @row.Item.Name
+                </NotAuthorized>
+              </AuthorizeView>
+            </td>
+            <td>@row.Item.LaunchNumber</td>
+            <td>@row.Item.Date.ToShortDateString()</td>
+            <td>@row.Item.Motors</td>
+            <td>@row.Item.Altitude</td>
+            <td>@row.Item.TopSpeed</td>
+          </tr>
+          @if (row.Item.ShowDetails)
+          {
+            <tr>
+              <td colspan="6">
+                <div class="form-row">
+                  <div class="col">
+                    <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.BurnTime)" Value="@row.Item.BurnTime" Unit="s"></LaunchCardRow>
+                  </div>
+                  <div class="col">
+                    <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.PeakAcceleration)" Value="@row.Item.PeakAcceleration" Unit="g"></LaunchCardRow>
+                  </div>
+                  <div class="col">
+                    <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.AverageAcceleration)" Value="@row.Item.AverageAcceleration" Unit="g"></LaunchCardRow>
+                  </div>
+                  <div class="col">
+                    <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.CoastToApogeeTime)" Value="@row.Item.CoastToApogeeTime" Unit="s"></LaunchCardRow>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <div class="col">
+                    <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.ApogeeToEjectionTime)" Value="@row.Item.ApogeeToEjectionTime" Unit="s"></LaunchCardRow>
+                  </div>
+                  <div class="col">
+                    <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.EjectionAltitude)" Value="@row.Item.EjectionAltitude" Unit="ft"></LaunchCardRow>
+                  </div>
+                  <div class="col">
+                    <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.DescentSpeed)" Value="@row.Item.DescentSpeed" Unit="s"></LaunchCardRow>
+                  </div>
+                  <div class="col">
+                    <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.Duration)" Value="@row.Item.Duration" Unit="s"></LaunchCardRow>
+                  </div>
+                </div>
+                @row.Item.Note
+              </td>
+            </tr>
+          }
+        </SmartishTable.Repeater>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="6">
+            <SmartishTable.Pagination Context="Pager">
+              <RocketLaunchJournal.Web.Client.Shared.SmartishTablePager Paginator="Pager"></RocketLaunchJournal.Web.Client.Shared.SmartishTablePager>
+            </SmartishTable.Pagination>
+          </td>
+        </tr>
+      </tfoot>
+    </table>
+  </SmartishTable.Root>
+}
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject AnonymousClient anonymousClient
+@inject IModalService ModalService
+@code {
+  private List<LaunchDto>? list;
+
+  private SmartishTable.Root<LaunchDto> launchTable;
+
+  private List<System.Reflection.PropertyInfo> dtoProperties = PropertyReflections.LaunchDtoProperties;
+
+  [CascadingParameter]
+  private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+  private SmartishTable.Filters.StringOperators nameOperator = SmartishTable.Filters.StringOperators.Contains;
+  private SmartishTable.Filters.NumericOperators launchNumberOperator = SmartishTable.Filters.NumericOperators.Equals;
+  private SmartishTable.Filters.DateTimeOperators launchDateOperator = SmartishTable.Filters.DateTimeOperators.Equals;
+  private SmartishTable.Filters.StringOperators motorsOperator = SmartishTable.Filters.StringOperators.Contains;
+  private SmartishTable.Filters.NumericOperators altitudeOperator = SmartishTable.Filters.NumericOperators.GreaterThanOrEqual;
+  private SmartishTable.Filters.NumericOperators topSpeedOperator = SmartishTable.Filters.NumericOperators.GreaterThanOrEqual;
+
+  private RocketLaunchJournal.Web.Shared.UserIdentity.UserClaimBuilder userInfo;
+
+  protected override async Task OnInitializedAsync()
+  {
+    var getList = anonymousClient.GetLaunches();
+    await Task.WhenAll(authenticationStateTask, getList);
+    userInfo = new RocketLaunchJournal.Web.Shared.UserIdentity.UserClaimBuilder(authenticationStateTask.Result.User);
+    list = getList.Result;
+  }
+
+  protected async Task AddEditAsync(int id)
+  {
+    await AddEdit.AddEditLaunchAsync(ModalService, launchTable, id);
+  }
+}

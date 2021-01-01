@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="IdentityModel" Version="4.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RocketLaunchJournal.Infrastructure.Dtos\RocketLaunchJournal.Infrastructure.Dtos.csproj" />
+    <ProjectReference Include="..\RocketLaunchJournal.Infrastructure.UserIdentity\RocketLaunchJournal.Infrastructure.UserIdentity.csproj" />
+    <ProjectReference Include="..\RocketLaunchJournal.Model\RocketLaunchJournal.Model.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,169 @@
+@page "/rockets"
+<div class="row">
+  <div class="col-sm-6 col-12">
+    <div class="form-row">
+      <div class="col-sm-6">
+        <h3>Rockets</h3>
+      </div>
+      <div class="col-sm-6 text-right">
+        <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.RocketAddEditDelete">
+          <button type="button" class="btn btn-primary" @onclick="@(() => AddEditRocketAsync(-1))" accesskey="A"><i class="fas fa-plus"></i> Add New</button>
+        </AuthorizeView>
+      </div>
+    </div>
+    @if (list == null)
+    {
+      <p><em>Loading...</em></p>
+    }
+    else
+    {
+      <SmartishTable.Root SafeList="list" @ref="rocketsTable" OnDataUpdated="OnDataUpdated">
+        <div class="form-row">
+          <div class="col-6">
+            <SmartishTable.FilterString TItem="RocketDto" Field="x=>x.Name" Context="filterContext">
+              <input type="text" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm mb-1" placeholder="Search Rockets..." />
+            </SmartishTable.FilterString>
+          </div>
+          <div class="col-6 text-right">
+            <SmartishTable.FilterBoolean TItem="RocketDto" Field="x=>x.IsActive" Operator="activeOnly">
+              <div class="form-check">
+                <label class="form-check-label">
+                  <input type="checkbox" class="form-check-input" @onclick="@(() => ToggleActiveOnly())" />
+                  Active Only
+                </label>
+              </div>
+            </SmartishTable.FilterBoolean>
+          </div>
+        </div>
+        <div class="form-row rockets-cards">
+          <SmartishTable.Repeater TItem="RocketDto" Context="row">
+            <RocketEditCard Dto="row.Item" AddEditAsync="AddEditRocketAsync" LoadLaunchesAsync="LoadLaunchesAsync" Index="row.Index"></RocketEditCard>
+          </SmartishTable.Repeater>
+        </div>
+      </SmartishTable.Root>
+    }
+  </div>
+  <div class="col-sm-6 col-12">
+    @if (selectedItem != null)
+    {<div class="form-row">
+        <div class="col-sm-6">
+          <h3>
+            <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.RocketAddEditDelete">
+              <Authorized Context="AuthorizedContext">
+                @if (userInfo.UserId == selectedItem.UserId)
+                {
+                  <button class="btn btn-link" @onclick="@(() => AddEditRocketAsync(selectedItem.RocketId))"><span class="fa fa-edit"></span> @selectedItem.Name Launches</button>
+                }
+                else
+                {
+                  <text>
+                    @selectedItem.Name Launches
+                  </text>
+                }
+              </Authorized>
+              <NotAuthorized Context="NotAuthorizedContext">
+                @selectedItem.Name Launches
+              </NotAuthorized>
+            </AuthorizeView>
+          </h3>
+        </div>
+        <div class="col-sm-6 text-right">
+          <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.LaunchAddEditDelete">
+            <button type="button" class="btn btn-primary" @onclick="@(() => AddEditLaunchForSelectedRocketAsync(-1))" accesskey="L"><i class="fas fa-plus"></i> Add Launch</button>
+          </AuthorizeView>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-sm-6">
+
+        </div>
+      </div>
+    }
+    <div class="form-row rockets-launch-cards">
+      @if (launches != null)
+      {
+        <SmartishTable.Root @ref="launchesTable" SafeList="launches">
+          <SmartishTable.Repeater TItem="LaunchDto" Context="row">
+            <LaunchEditCard Dto="row.Item" AddEditAsync="AddEditLaunchAsync" Index="row.Index"></LaunchEditCard>
+          </SmartishTable.Repeater>
+        </SmartishTable.Root>
+      }
+      else if (loadingLaunches)
+      {
+        <p><em>Loading...</em></p>
+      }
+    </div>
+  </div>
+</div>
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject IModalService ModalService
+@inject AnonymousClient anonymousClient
+@code {
+  private List<RocketDto>? list;
+
+  private List<LaunchDto>? launches = null;
+
+  private SmartishTable.Root<RocketDto> rocketsTable;
+
+  private SmartishTable.Root<LaunchDto> launchesTable;
+
+  private bool loadingLaunches = false;
+
+  [CascadingParameter]
+  private Task<AuthenticationState> authenticationStateTask { get; set; }
+
+  private RocketDto? selectedItem { get; set; }
+
+  private SmartishTable.Filters.BooleanOperators? activeOnly = null;
+
+  private RocketLaunchJournal.Web.Shared.UserIdentity.UserClaimBuilder userInfo;
+
+  protected Task OnDataUpdated()
+  {
+    selectedItem = null;
+    launches = null;
+    return Task.CompletedTask;
+  }
+
+  protected override async Task OnInitializedAsync()
+  {
+    var getList = anonymousClient.GetRockets();
+    await Task.WhenAll(authenticationStateTask, getList);
+    userInfo = new RocketLaunchJournal.Web.Shared.UserIdentity.UserClaimBuilder(authenticationStateTask.Result.User);
+    list = getList.Result;
+  }
+
+  protected void ToggleActiveOnly()
+  {
+    if (activeOnly.HasValue)
+      activeOnly = null;
+    else
+      activeOnly = SmartishTable.Filters.BooleanOperators.IsTrue;
+  }
+
+  protected async Task LoadLaunchesAsync(RocketDto dto)
+  {
+    selectedItem = dto;
+    loadingLaunches = true;
+    launches = null;
+    launches = await anonymousClient.GetLaunches(dto.RocketId);
+    loadingLaunches = false;
+  }
+
+  protected async Task AddEditRocketAsync(int index)
+  {
+    await AddEdit.AddEditRocketAsync(ModalService, rocketsTable, index);
+  }
+
+  protected async Task AddEditLaunchAsync(int index)
+  {
+    await AddEdit.AddEditLaunchAsync(ModalService, launchesTable, index);
+  }
+
+  protected async Task AddEditLaunchForSelectedRocketAsync(int index)
+  {
+    await AddEdit.AddEditLaunchAsync(ModalService, launchesTable, index, selectedItem);
+  }
+}

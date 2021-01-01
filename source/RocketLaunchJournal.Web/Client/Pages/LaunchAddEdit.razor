@@ -1,0 +1,136 @@
+﻿<div class="modal-backdrop fade show"></div>
+<div class="modal fade show d-block" style="pointer-events: none;" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="col"><h5 class="modal-title">@BlazoredModal.Title</h5></div>
+        <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
+        <button type="button" class="close" aria-label="Close" @onclick="BlazoredModal.Cancel">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      @if (_editContext != null)
+      {
+        <EditForm EditContext="_editContext" OnValidSubmit="Save">
+          <div class="modal-body">
+            <DataAnnotationsValidator />
+            <div class="form-horizontal">
+              <EditSelect @bind-Value="Dto.RocketId" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.RocketId))" ValidationFor="(() => Dto.RocketId)">
+                <option value="0">Select...</option>
+                @foreach (var item in Rockets)
+          {
+          <option selected=@(Dto.RocketId == item.Value) value="@(item.Value)">@item.Text</option>
+  }
+              </EditSelect>
+              <EditNumber @bind-Value="Dto.LaunchNumber" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.LaunchNumber))" ValidationFor="(() => Dto.LaunchNumber)" />
+              <EditDate @bind-Value="Dto.Date" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Date))" ValidationFor="(() => Dto.Date)" />
+              <EditText @bind-Value="Dto.Motors" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Motors))" ValidationFor="(() => Dto.Motors)" />
+              <div class="form-row">
+                <div class="col">
+                  <EditNumber @bind-Value="Dto.Altitude" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Altitude))" ValidationFor="(() => Dto.Altitude)" LabelCss="@smallLabelCss" />
+                  <EditNumber @bind-Value="Dto.TopSpeed" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.TopSpeed))" ValidationFor="(() => Dto.TopSpeed)" LabelCss="@smallLabelCss" />
+                  <EditNumber @bind-Value="Dto.BurnTime" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.BurnTime))" ValidationFor="(() => Dto.BurnTime)" LabelCss="@smallLabelCss" />
+                  <EditNumber @bind-Value="Dto.PeakAcceleration" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.PeakAcceleration))" ValidationFor="(() => Dto.PeakAcceleration)" LabelCss="@smallLabelCss" />
+                  <EditNumber @bind-Value="Dto.AverageAcceleration" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.AverageAcceleration))" ValidationFor="(() => Dto.AverageAcceleration)" LabelCss="@smallLabelCss" />
+                </div>
+                <div class="col">
+                  <EditNumber @bind-Value="Dto.CoastToApogeeTime" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.CoastToApogeeTime))" ValidationFor="(() => Dto.CoastToApogeeTime)" LabelCss="@smallLabelCss" />
+                  <EditNumber @bind-Value="Dto.ApogeeToEjectionTime" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.ApogeeToEjectionTime))" ValidationFor="(() => Dto.ApogeeToEjectionTime)" LabelCss="@smallLabelCss" />
+                  <EditNumber @bind-Value="Dto.EjectionAltitude" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.EjectionAltitude))" ValidationFor="(() => Dto.EjectionAltitude)" LabelCss="@smallLabelCss" />
+                  <EditNumber @bind-Value="Dto.DescentSpeed" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.DescentSpeed))" ValidationFor="(() => Dto.DescentSpeed)" LabelCss="@smallLabelCss" />
+                  <EditNumber @bind-Value="Dto.Duration" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Duration))" ValidationFor="(() => Dto.Duration)" LabelCss="@smallLabelCss" />
+                </div>
+              </div>
+              
+              <EditText @bind-Value="Dto.Note" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Note))" ValidationFor="(() => Dto.Note)" />
+              @*<EditCheckbox @bind-Value="@Dto.IsActive" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.IsActive))" />*@
+            </div>
+          </div>
+          <div class="modal-footer">
+            <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
+            <div class="col text-right"><ModalDefaultFooterButtons OnCancel="BlazoredModal.Cancel" /></div>
+          </div>
+        </EditForm>
+      }
+    </div>
+  </div>
+</div>
+
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+
+@inject IModalService ModalService
+@inject AuthorizedClient authorizedClient
+
+@code {
+
+    [CascadingParameter]
+    private BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public RocketLaunchJournal.Infrastructure.Dtos.LaunchDto DtoOriginal { get; set; } = default!;
+
+    [Parameter]
+    public int? SelectedRocketId { get; set; }
+
+    [Parameter]
+    public int InitialLaunchNumber { get; set; }
+
+    private RocketLaunchJournal.Infrastructure.Dtos.LaunchDto Dto { get; set; } = default!;
+
+    private EditContext _editContext = default!;
+
+    private List<RocketLaunchJournal.Infrastructure.Dtos.Helpers.SelectOptionDto<int>> Rockets = default!;
+
+    private string smallLabelCss = "col-sm-6";
+
+    private bool dataUpdated
+    {
+      get
+      {
+        return !Dto.Equals(DtoOriginal);
+      }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+      if (DtoOriginal == null)
+      {
+        DtoOriginal = new Infrastructure.Dtos.LaunchDto()
+        {
+          IsActive = true,
+          IsUpdated = true,
+          Date = DateTime.Today,
+          RocketId = SelectedRocketId ?? 0,
+          LaunchNumber = InitialLaunchNumber,
+        };
+      }
+
+      Dto = DtoOriginal.SerializeJson().DeserializeJson<RocketLaunchJournal.Infrastructure.Dtos.LaunchDto>();
+
+      Rockets = await authorizedClient.GetRocketsForSelection();
+      if (Rockets == null)
+        Rockets = new List<Infrastructure.Dtos.Helpers.SelectOptionDto<int>>();
+
+      _editContext = new EditContext(Dto);
+    }
+
+    async Task Save()
+    {
+      Dto.IsUpdated = dataUpdated;
+
+      // update roleDto
+      var rocket = Rockets.FirstOrDefault(w => w.Value == Dto.RocketId);
+      if (rocket != null)
+      {
+        Dto.Name = rocket.Text;
+      }
+
+      if (Dto.IsUpdated)
+      {
+        var data = await authorizedClient.SaveLaunch(Dto);
+        if (data != null)
+          await BlazoredModal.Close(ModalResult.Ok(data));
+      }
+    }
+}

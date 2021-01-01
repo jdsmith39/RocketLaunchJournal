@@ -1,0 +1,115 @@
+﻿
+<div class="modal-backdrop fade show"></div>
+<div class="modal fade show d-block" style="pointer-events: none;" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="col"><h5 class="modal-title">@BlazoredModal.Title</h5></div>
+        <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
+        <button type="button" class="close" aria-label="Close" @onclick="BlazoredModal.Cancel">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <EditForm EditContext="_editContext" OnValidSubmit="Save">
+        <div class="modal-body">
+          <DataAnnotationsValidator />
+          <ValidationSummary />
+          <div class="form-horizontal">
+            <EditText @bind-Value="Dto.FirstName" PropertyInfo="Dto.GetType().GetProperty(nameof(Dto.FirstName))" ValidationFor="(() => Dto.FirstName)" />
+            <EditText @bind-Value="Dto.LastName" PropertyInfo="Dto.GetType().GetProperty(nameof(Dto.LastName))" ValidationFor="(() => Dto.LastName)" />
+            <EditText @bind-Value="Dto.Email" PropertyInfo="Dto.GetType().GetProperty(nameof(Dto.Email))" ValidationFor="(() => Dto.Email)" />
+            <EditText @bind-Value="Dto.PhoneNumber" PropertyInfo="Dto.GetType().GetProperty(nameof(Dto.PhoneNumber))" ValidationFor="(() => Dto.PhoneNumber)" />
+            <EditSelect @bind-Value="Dto.Role.RoleId" PropertyInfo="Dto.GetType().GetProperty(nameof(Dto.Role))">
+              <option value="0">None</option>
+              @if (_roles != null)
+              {
+                foreach (var item in _roles)
+                {
+                  <option selected=@(Dto.Role.RoleId == item.RoleId) value="@item.RoleId">@item.Name</option>
+                }
+              }
+            </EditSelect>
+
+            <EditCheckbox @bind-Value="@Dto.IsLoginEnabled" PropertyInfo="Dto.GetType().GetProperty(nameof(Dto.IsLoginEnabled))" />
+            <EditCheckbox @bind-Value="@Dto.IsActive" PropertyInfo="Dto.GetType().GetProperty(nameof(Dto.IsActive))" />
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
+          <div class="col text-right"><ModalDefaultFooterButtons OnCancel="BlazoredModal.Cancel" /></div>
+        </div>
+      </EditForm>
+    </div>
+  </div>
+</div>
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using RocketLaunchJournal.Infrastructure.Dtos.Users
+
+@inject AuthorizedClient authorizedClient
+@inject IModalService ModalService
+@code {
+
+    [CascadingParameter]
+    private BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    [Parameter]
+    public RocketLaunchJournal.Infrastructure.Dtos.Users.UserDto DtoOriginal { get; set; } = default!;
+
+    private RocketLaunchJournal.Infrastructure.Dtos.Users.UserDto Dto { get; set; } = default!;
+
+    private EditContext _editContext = default!;
+    private List<RoleDto>? _roles;
+
+    private bool dataUpdated
+    {
+      get
+      {
+        return !Dto.Equals(DtoOriginal);
+      }
+    }
+
+    protected async override Task OnInitializedAsync()
+    {
+      if (DtoOriginal == null)
+      {
+        DtoOriginal = new Infrastructure.Dtos.Users.UserDto()
+        {
+          Role = new RoleDto(),
+          IsActive = true,
+          IsUpdated = true,
+        };
+      }
+
+      if (DtoOriginal.Role == null)
+        DtoOriginal.Role = new RoleDto();
+
+      Dto = DtoOriginal.SerializeJson().DeserializeJson<RocketLaunchJournal.Infrastructure.Dtos.Users.UserDto>();
+
+      _editContext = new EditContext(Dto);
+
+      _roles = await authorizedClient.GetRoles();
+    }
+
+    async Task Save()
+    {
+      if (Dto.Role == null)
+        return;
+
+      // update roleDto
+      var role = _roles.FirstOrDefault(w => w.RoleId == Dto.Role.RoleId);
+      if (role != null)
+      {
+        Dto.Role.Name = role.Name;
+      }
+
+      Dto.IsUpdated = dataUpdated;
+      if (Dto.IsUpdated)
+      {
+        var data = await authorizedClient.SaveUser(Dto);
+        if (data != null)
+          await BlazoredModal.Close(ModalResult.Ok(Dto));
+      }
+    }
+}
