@@ -67,7 +67,7 @@ namespace RocketLaunchJournal.Web.Client.Helpers
             {
                 var fileInfo = responseMessage.Content.Headers.ContentDisposition;
                 var data = await responseMessage.Content.ReadAsStringAsync();
-                await _jsRuntime.InvokeVoidAsync("saveDataToFile", data!, responseMessage.Content.Headers!.ContentType!.MediaType!, fileInfo?.FileName ?? "Report.csv");
+                await _jsRuntime.InvokeVoidAsync("saveDataToFile", data!, responseMessage.Content.Headers!.ContentType!.MediaType!, fileInfo?.FileNameStar ?? "Report.csv");
             }
             else
             {
