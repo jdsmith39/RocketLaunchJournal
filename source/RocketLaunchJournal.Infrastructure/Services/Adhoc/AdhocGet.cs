@@ -89,7 +89,7 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
                 return null;
             var report = new ReportDataDto();
             var columns = GetReportSourceColumns(reportSource);
-            report.RemovedColumns = CheckColumns(dto, columns);
+            //report.RemovedColumns = CheckColumns(dto, columns);
             if (dto.Columns.Count == 0)
                 return report;
 
@@ -110,7 +110,7 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
             adapter.SelectCommand = cmd;
             var dataSet = new DataSet();
             adapter.Fill(dataSet);
-            report.Data = dataSet.Tables[0].ToList();
+            report.Data = dataSet.Tables[0].ToList().ToList();
             return report;
         }
 

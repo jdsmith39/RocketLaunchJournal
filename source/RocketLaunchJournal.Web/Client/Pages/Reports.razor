@@ -5,6 +5,7 @@
     <h3>Ad Hoc Reports</h3>
   </div>
   <div class="col-sm-6 text-right">
+    <button type="button" class="btn btn-xs btn-outline-success"><span class="icon-x25">▶</span>To Data</button>
   </div>
 </div>
 @if (reportSources == null)
@@ -200,6 +201,12 @@ else
       </div>
     </div>
   </EditForm>
+  @if (Dto != null && DataDto != null)
+  {
+  <div>
+    <ShowReport Dto="Dto" DataDto="DataDto"></ShowReport>
+  </div>
+  }
   @Dto.ReportSourceId
   @SelectedReportId
   @Dto?.Columns?.SerializeJson()

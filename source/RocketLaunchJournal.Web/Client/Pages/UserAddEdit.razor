@@ -6,7 +6,7 @@
       <div class="modal-header">
         <div class="col"><h5 class="modal-title">@BlazoredModal.Title</h5></div>
         <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
-        <button type="button" class="close" aria-label="Close" @onclick="BlazoredModal.Cancel">
+        <button type="button" class="close" aria-label="Close" @onclick="BlazoredModal.CancelAsync">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
@@ -37,7 +37,7 @@
         </div>
         <div class="modal-footer">
           <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
-          <div class="col text-right"><ModalDefaultFooterButtons OnCancel="BlazoredModal.Cancel" /></div>
+          <div class="col text-right"><ModalDefaultFooterButtons OnCancel="BlazoredModal.CancelAsync" /></div>
         </div>
       </EditForm>
     </div>
@@ -109,7 +109,7 @@
       {
         var data = await authorizedClient.SaveUser(Dto);
         if (data != null)
-          await BlazoredModal.Close(ModalResult.Ok(Dto));
+          await BlazoredModal.CloseAsync(ModalResult.Ok(Dto));
       }
     }
 }

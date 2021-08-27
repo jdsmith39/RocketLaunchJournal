@@ -57,6 +57,7 @@ namespace RocketLaunchJournal.Web.Client.Pages
         }
 
         private int defaultReportSourceId;
+        private ReportDataDto DataDto;
 
         internal List<ReportSourceColumnDto> sourceColumns = new List<ReportSourceColumnDto>();
         private ReportDto Dto = new ReportDto() { Columns = new List<ReportSourceColumnDto>() };
@@ -124,7 +125,7 @@ namespace RocketLaunchJournal.Web.Client.Pages
             if (!editContext.Validate())
                 return;
 
-            var report = await anonymousClient.GenerateReport(Dto);
+            DataDto = await anonymousClient.GenerateReport(Dto);
         }
 
         private async Task DownloadReport()

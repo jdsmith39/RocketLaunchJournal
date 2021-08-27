@@ -1,0 +1,62 @@
+﻿<div class="row">
+  <div class="col-sm-6">
+    <h3>@Dto.Name</h3>
+  </div>
+  <div class="col-sm-6 text-right">
+    
+  </div>
+</div>
+
+@if (Dto == null)
+{
+  <p><em>Loading...</em></p>
+}
+else
+{
+<SmartishTable.Root SafeList="DataDto.Data" @ref="table">
+  <table class="table table-condensed table-striped">
+    <thead>
+      <tr>
+        @foreach (var item in columns)
+        {
+          <SmartishTable.Sort TItem="Dictionary<string,object>" Field="o=>o[item.Name]" Css="canSelect">@item.Name</SmartishTable.Sort>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      <SmartishTable.Repeater TItem="Dictionary<string,object>" Context="row">
+        <tr>
+          @foreach (var item in columns)
+          {
+            switch (item.TypeName)
+            {
+              case "Boolean":
+                <td><IsActive Value="@((bool)row.Item[item.Name])" /></td>
+                break;
+              default:
+                <th>@row.Item[item.Name]</th>
+                break;
+            }
+          }
+        </tr>
+      </SmartishTable.Repeater>
+    </tbody>
+  </table>
+</SmartishTable.Root>
+}
+
+@code {
+    [Parameter]
+    public ReportDto Dto { get; set; }
+
+    [Parameter]
+    public ReportDataDto DataDto { get; set; }
+
+    private SmartishTable.Root<Dictionary<string,object>> table;
+    private List<ReportSourceColumnDto> columns;
+
+    protected override async Task OnInitializedAsync()
+    {
+      columns = Dto.Columns.Where(w => w.InOutput).ToList();
+    }
+}
