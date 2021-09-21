@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace RocketLaunchJournal.Web.Client.Services
@@ -143,20 +144,20 @@ namespace RocketLaunchJournal.Web.Client.Services
             }
         }
 
-        public async Task<ReportDataDto> GenerateReport(ReportDto dto)
+        public async Task<ReportDataDto<JsonElement>> GenerateReport(ReportDto dto)
         {
             try
             {
                 var content = _serviceResponseHandler.BuildJsonContent(dto);
                 var response = await _httpClient.PostAsync("api/Adhoc/Generate", content);
-                return await _serviceResponseHandler.HandleJsonResponse<ReportDataDto>(response);
+                return await _serviceResponseHandler.HandleJsonResponse<ReportDataDto<JsonElement>>(response);
             }
             catch (AccessTokenNotAvailableException exception)
             {
                 exception.Redirect();
             }
 
-            return new ReportDataDto();
+            return new ReportDataDto<JsonElement>();
         }
     }
 }

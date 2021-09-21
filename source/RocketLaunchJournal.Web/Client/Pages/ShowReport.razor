@@ -1,47 +1,110 @@
-﻿<div class="row">
-  <div class="col-sm-6">
-    <h3>@Dto.Name</h3>
-  </div>
-  <div class="col-sm-6 text-right">
-    
-  </div>
+﻿@using System.Text.Json
+<div class="row">
+    <div class="col-sm-6">
+        <h3>@Dto.Name</h3>
+    </div>
+    <div class="col-sm-6 text-right">
+    </div>
 </div>
 
 @if (Dto == null)
 {
-  <p><em>Loading...</em></p>
+    <p><em>Loading...</em></p>
 }
 else
 {
-<SmartishTable.Root SafeList="DataDto.Data" @ref="table">
-  <table class="table table-condensed table-striped">
-    <thead>
-      <tr>
-        @foreach (var item in columns)
-        {
-          <SmartishTable.Sort TItem="Dictionary<string,object>" Field="o=>o[item.Name]" Css="canSelect">@item.Name</SmartishTable.Sort>
-        }
-      </tr>
-    </thead>
-    <tbody>
-      <SmartishTable.Repeater TItem="Dictionary<string,object>" Context="row">
-        <tr>
-          @foreach (var item in columns)
-          {
-            switch (item.TypeName)
-            {
-              case "Boolean":
-                <td><IsActive Value="@((bool)row.Item[item.Name])" /></td>
-                break;
-              default:
-                <th>@row.Item[item.Name]</th>
-                break;
-            }
-          }
-        </tr>
-      </SmartishTable.Repeater>
-    </tbody>
-  </table>
+    <SmartishTable.Root SafeList="DataDtos.Data" @ref="table">
+        <table class="table table-condensed table-striped">
+            <thead>
+                <tr>
+                    @foreach (var item in columns)
+                {
+                    <SmartishTable.Sort TItem="Dictionary<string, JsonElement>" Field="o=>o[item.Name]" Css="canSelect" Comparer="jsonElementComparer">@item.Name</SmartishTable.Sort>
+                }
+            </tr>
+            <tr>
+                @foreach (var item in columns)
+                {
+                    <td>
+
+                        @switch (item.TypeName.ToLower())
+                        {
+                            case "datetime":
+                            case "string":
+                                if (!stringOperators.ContainsKey(item.Name))
+                                    stringOperators[item.Name] = SmartishTable.Filters.StringOperators.Contains;
+                                <text>
+                                    <select @bind="stringOperators[item.Name]" class="form-control form-control-sm">
+                                        @foreach (var enumItem in SmartishTable.Filters.StringOperators.Equals.GetList())
+                                        {
+                                            <option value="@enumItem">@enumItem.GetDisplayName()</option>
+                                        }
+                                    </select>
+                                    <FilterJsonElementString Context="filterContext" PropertyName="@item.Name" Operator="stringOperators[item.Name]">
+                                        <input type="text" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" class="form-control form-control-sm" />
+                                    </FilterJsonElementString>
+                                </text>
+                                break;
+                            case "int":
+                            case "decimal":
+                            case "double":
+                                if (!numericOperators.ContainsKey(item.Name))
+                                    numericOperators[item.Name] = SmartishTable.Filters.NumericOperators.GreaterThanOrEqual;
+                                <text>
+                                    <select @bind="numericOperators[item.Name]" class="form-control form-control-sm">
+                                        @foreach (var enumItem in SmartishTable.Filters.NumericOperators.Equals.GetList())
+                                        {
+                                            <option value="@enumItem">@enumItem.GetDisplayName()</option>
+                                        }
+                                    </select>
+                                    <FilterJsonElementNumeric PropertyName="@item.Name" Context="filterContext" Operator="numericOperators[item.Name]">
+                                        <input type="number" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" class="form-control form-control-sm" />
+                                    </FilterJsonElementNumeric>
+                                </text>
+                                break;
+                            case "boolean":
+                                if (!booleanOperators.ContainsKey(item.Name))
+                                    booleanOperators[item.Name] = SmartishTable.Filters.BooleanOperators.Equals;
+                                <text>
+                                    <select @bind="booleanOperators[item.Name]" class="form-control form-control-sm">
+                                        <option value="@SmartishTable.Filters.BooleanOperators.Equals">All</option>
+                                        @foreach (var enumItem in SmartishTable.Filters.BooleanOperators.Equals.GetList().Where(w => ((byte)w) > 8))
+                                        {
+                                            <option selected="@(booleanOperators[item.Name] == enumItem)" value="@enumItem">@enumItem.GetDisplayName()</option>
+                                        }
+                                    </select>
+                                    <FilterJsonElementBoolean PropertyName="@item.Name" Operator="booleanOperators[item.Name]"></FilterJsonElementBoolean>
+                                </text>
+                                break;
+                        }
+                    </td>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            <SmartishTable.Repeater TItem="Dictionary<string, JsonElement>" Context="row">
+                <tr>
+                    @foreach (var item in columns)
+                    {
+                        switch (item.TypeName.ToLower())
+                        {
+                            case "boolean":
+                                <td><IsActive Value="@row.Item[item.Name].GetBoolean()" /></td>
+                                break;
+                            case "string":
+                                <th>@row.Item[item.Name]</th>
+                                break;
+                            case "int":
+                            case "decimal":
+                            case "double":
+                                <th>@row.Item[item.Name].GetDouble()</th>
+                                break;
+                        }
+                    }
+                </tr>
+            </SmartishTable.Repeater>
+        </tbody>
+    </table>
 </SmartishTable.Root>
 }
 
@@ -50,13 +113,72 @@ else
     public ReportDto Dto { get; set; }
 
     [Parameter]
-    public ReportDataDto DataDto { get; set; }
+    public ReportDataDto<JsonElement> DataDtos { get; set; }
 
-    private SmartishTable.Root<Dictionary<string,object>> table;
+    private Dictionary<string, SmartishTable.Filters.StringOperators> stringOperators = new Dictionary<string, SmartishTable.Filters.StringOperators>();
+    private Dictionary<string, SmartishTable.Filters.BooleanOperators> booleanOperators = new Dictionary<string, SmartishTable.Filters.BooleanOperators>();
+    private Dictionary<string, SmartishTable.Filters.NumericOperators> numericOperators = new Dictionary<string, SmartishTable.Filters.NumericOperators>();
+
+    private SmartishTable.Root<Dictionary<string, JsonElement>> table;
     private List<ReportSourceColumnDto> columns;
+    private JsonElementComparer jsonElementComparer = new JsonElementComparer();
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-      columns = Dto.Columns.Where(w => w.InOutput).ToList();
+        columns = Dto.Columns.Where(w => w.InOutput).ToList();
+    }
+
+    public class JsonElementComparer : IComparer<object?>
+    {
+        public int Compare(object? xx, object? yy)
+        {
+            if (xx == null && yy == null)
+                return 0;
+
+            if (xx == null && yy != null)
+                return 1;
+            if (xx != null && yy == null)
+                return -1;
+
+            var x = (JsonElement?)xx;
+            var y = (JsonElement?)yy;
+
+            if (x.Value.ValueKind != JsonValueKind.Null && y.Value.ValueKind == JsonValueKind.Null)
+                return -1;
+
+            switch (x.Value.ValueKind)
+            {
+                case JsonValueKind.Undefined:
+                    break;
+                case JsonValueKind.Object:
+                    break;
+                case JsonValueKind.Array:
+                    break;
+                case JsonValueKind.String:
+                    return string.Compare(x.Value.GetString(), y.Value.GetString(), true);
+                case JsonValueKind.Number:
+                    var xDouble = x.Value.GetDouble();
+                    var yDouble = y.Value.GetDouble();
+                    if (xDouble < yDouble)
+                        return -1;
+                    else if (xDouble > yDouble)
+                        return 1;
+                    return 0;
+                case JsonValueKind.True:
+                case JsonValueKind.False:
+                    var xBool = x.Value.GetBoolean();
+                    var yBool = y.Value.GetBoolean();
+                    if (xBool == yBool)
+                        return 0;
+                    else if (xBool && !yBool)
+                        return 1;
+                    return -1;
+                case JsonValueKind.Null:
+                    if (y.Value.ValueKind == JsonValueKind.Null)
+                        return 0;
+                    return 1;
+            }
+            return 0;
+        }
     }
 }

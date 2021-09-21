@@ -7,6 +7,7 @@ using RocketLaunchJournal.Web.Client.Shared.FormControls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace RocketLaunchJournal.Web.Client.Pages
@@ -57,7 +58,7 @@ namespace RocketLaunchJournal.Web.Client.Pages
         }
 
         private int defaultReportSourceId;
-        private ReportDataDto DataDto;
+        private ReportDataDto<JsonElement>? DataDto;
 
         internal List<ReportSourceColumnDto> sourceColumns = new List<ReportSourceColumnDto>();
         private ReportDto Dto = new ReportDto() { Columns = new List<ReportSourceColumnDto>() };

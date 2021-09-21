@@ -82,12 +82,12 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
         /// </summary>
         /// <param name="dto">report definition</param>
         /// <returns>list of data</returns>
-        public async Task<ReportDataDto?> GenerateReport(ReportDto dto)
+        public async Task<ReportDataDto<object>?> GenerateReport(ReportDto dto)
         {
             var reportSource = await db.ReportSources.FirstOrDefaultAsync(w => w.ReportSourceId == dto.ReportSourceId);
             if (reportSource == null)
                 return null;
-            var report = new ReportDataDto();
+            var report = new ReportDataDto<object>();
             var columns = GetReportSourceColumns(reportSource);
             //report.RemovedColumns = CheckColumns(dto, columns);
             if (dto.Columns.Count == 0)
