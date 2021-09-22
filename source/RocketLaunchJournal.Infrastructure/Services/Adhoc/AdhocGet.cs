@@ -56,11 +56,12 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
         /// </summary>
         /// <param name="dto">report source dto</param>
         /// <returns>ReportSourceColumnDto list</returns>
-        public List<ReportSourceColumnDto> GetReportSourceColumns(ReportSource dto)
+        public async Task<List<ReportSourceColumnDto>> GetReportSourceColumns(ReportSource dto)
         {
+            var reportSource = await  db.ReportSources.FirstOrDefaultAsync(w => w.ReportSourceId == dto.ReportSourceId);
             using var cmd = new SqlCommand();
             cmd.Connection = db.Database.GetDbConnection() as SqlConnection;
-            cmd.CommandText = $"Select top 1 * From {dto.SQLName} Where 1 = 0";
+            cmd.CommandText = $"Select top 1 * From {reportSource.SQLName} Where 1 = 0";
             var adapter = new SqlDataAdapter();
             adapter.SelectCommand = cmd;
             var dataSet = new DataSet();

@@ -224,7 +224,80 @@ namespace RocketLaunchJournal.Web.Client.Pages
             sourceColumns = await anonymousClient.GetReportSourceColumns(reportSource);
             // blazor does NOT know about the change in these kinds of events.
             StateHasChanged();
+        
         }
+
+        #region Sorting
+
+        private Task SortOrderChanged(ReportSourceColumnDto item, int? newSortOrder)
+        {
+            var oldSortOrder = item.SortOrder;
+            item.SortOrder = newSortOrder;
+            if (oldSortOrder.HasValue && newSortOrder.HasValue)
+            {
+                // simple sort order swap
+                var column = Dto.Columns.FirstOrDefault(w => w.Name != item.Name && w.SortOrder == newSortOrder);
+                if (column is not null)
+                    column.SortOrder = oldSortOrder;
+                else
+                    AddRemoveSortOrders();
+            }
+            else
+            {
+                if (!item.Sort.HasValue && item.SortOrder.HasValue)
+                    item.Sort = SortTypes.Ascending;
+                else if (item.Sort.HasValue && !item.SortOrder.HasValue)
+                    item.Sort = null;
+
+                AddRemoveSortOrders(item);
+            }
+            return Task.CompletedTask;
+        }
+
+        private Task SortChanged(ReportSourceColumnDto item, SortTypes? newSort)
+        {
+            var oldSort = item.Sort;
+            if (newSort.HasValue && !item.SortOrder.HasValue)
+                item.SortOrder = sortOrders.Last();
+            else if (!newSort.HasValue && item.SortOrder.HasValue)
+                item.SortOrder = null;
+
+            item.Sort = newSort;
+
+            if (oldSort.HasValue != newSort.HasValue)
+                AddRemoveSortOrders();
+
+            return Task.CompletedTask;
+        }
+
+        private void AddRemoveSortOrders(ReportSourceColumnDto itemUpdated = null)
+        {
+            var blah = 1;
+            var query = Dto.Columns.Where(w => w.SortOrder.HasValue).OrderBy(o => o.SortOrder);
+            if (itemUpdated is not null)
+                query = query.ThenByDescending(o => o.Name == itemUpdated.Name);
+            foreach (var item in query)
+            {
+                item.SortOrder = sortOrders[blah - 1];
+                
+                // adds the next one
+                blah++;
+                if (sortOrders.IndexOf(blah) == -1)
+                    sortOrders.Add(blah);
+            }
+
+            if (blah < sortOrders.Count)
+            {
+                for (int yackity = sortOrders.Count - 1; yackity >= blah; yackity--)
+                {
+                    sortOrders.RemoveAt(yackity);
+                }
+            }
+        }
+
+        #endregion
+
+        #region column navigation
 
         private Task AddColumn(ReportSourceColumnDto item, int index)
         {
@@ -263,6 +336,8 @@ namespace RocketLaunchJournal.Web.Client.Pages
             SelectedTable.UpdateAt(index, temp);
             return Task.CompletedTask;
         }
+
+        #endregion
 
         protected virtual void Dispose(bool disposing)
         {

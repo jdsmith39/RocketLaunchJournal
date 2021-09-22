@@ -55,10 +55,10 @@ namespace RocketLaunchJournal.Web.Server.Controllers
 
         [HttpPost("ReportSources/Columns")]
         [ProducesResponseType(typeof(List<ReportSourceColumnDto>), (int)System.Net.HttpStatusCode.OK)]
-        public IActionResult GetReportSourceColumns([FromBody] ReportSourceDto dto)
+        public async Task<IActionResult> GetReportSourceColumns([FromBody] ReportSourceDto dto)
         {
             var service = GetService<AdhocGet>();
-            return Ok(service.GetReportSourceColumns(dto));
+            return Ok(await service.GetReportSourceColumns(dto));
         }
 
         [HttpPost("Generate")]

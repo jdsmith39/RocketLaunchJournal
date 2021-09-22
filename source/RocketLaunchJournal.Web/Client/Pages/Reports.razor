@@ -136,7 +136,7 @@ else
                               <label for="@string.Format(sortIdFormat, row.Index)" class="mr-sm-2">
                                 Sort
                               </label>
-                              <InputSelect @bind-Value="row.Item.Sort" class="form-control form-control-sm mr-sm-2" id="@string.Format(sortIdFormat, row.Index)">
+                              <InputSelect ValueExpression="@(() => row.Item.Sort)" Value="@row.Item.Sort" ValueChanged="@((SortTypes? value) => SortChanged(row.Item, value))" class="form-control form-control-sm mr-sm-2" id="@string.Format(sortIdFormat, row.Index)">
                                 <option value="">None</option>
                                 @foreach (var item in sortTypes)
                             {
@@ -149,7 +149,7 @@ else
                               <label for="@string.Format(sortOrderIdFormat, row.Index)" class="mr-sm-2">
                                 Sort Order
                               </label>
-                              <InputSelect @bind-Value="row.Item.SortOrder" class="form-control form-control-sm mr-sm-2" id="@string.Format(sortOrderIdFormat, row.Index)">
+                              <InputSelect ValueExpression="@(() => row.Item.SortOrder)" Value="@row.Item.SortOrder" ValueChanged="@((int? value) => SortOrderChanged(row.Item, value))" class="form-control form-control-sm mr-sm-2" id="@string.Format(sortOrderIdFormat, row.Index)">
                                 <option value="">None</option>
                                 @foreach (var item in sortOrders)
                             {
