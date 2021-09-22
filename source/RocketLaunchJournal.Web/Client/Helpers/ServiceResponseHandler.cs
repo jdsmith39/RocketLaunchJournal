@@ -19,7 +19,7 @@ namespace RocketLaunchJournal.Web.Client.Helpers
             _jsRuntime = jsRuntime;
         }
 
-        public async Task<T> HandleJsonResponse<T>(HttpResponseMessage responseMessage)
+        public async Task<T?> HandleJsonResponse<T>(HttpResponseMessage responseMessage)
         {
             string? content = null;
             if (responseMessage.Content != null)
@@ -57,7 +57,7 @@ namespace RocketLaunchJournal.Web.Client.Helpers
                 _toastService.ShowError(content ?? "Error occurred");
             }
 
-            return default(T);
+            return default;
         }
 
         public async Task HandleFileDownload(HttpResponseMessage responseMessage)

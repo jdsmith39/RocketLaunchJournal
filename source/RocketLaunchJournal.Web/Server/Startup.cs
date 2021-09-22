@@ -58,6 +58,7 @@ namespace RocketLaunchJournal.Web.Server
             services.AddControllersWithViews().AddJsonOptions((options) =>
             {
                 options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.Converters.Add(new TextJsonSerializer.DBNullConverter());
             });
             services.AddRazorPages().AddJsonOptions((options) =>
             {

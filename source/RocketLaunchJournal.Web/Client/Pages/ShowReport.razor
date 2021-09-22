@@ -91,19 +91,23 @@ else
                             case "boolean":
                                 <td><IsActive Value="@row.Item[item.Name].GetBoolean()" /></td>
                                 break;
-                            case "string":
-                                <th>@row.Item[item.Name]</th>
-                                break;
-                            case "int":
-                            case "decimal":
-                            case "double":
-                                <th>@row.Item[item.Name].GetDouble()</th>
+                            default:
+                                <td>@row.Item[item.Name]</td>
                                 break;
                         }
                     }
                 </tr>
             </SmartishTable.Repeater>
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="@columns.Count">
+                    <SmartishTable.Pagination Context="Pager">
+                        <RocketLaunchJournal.Web.Client.Shared.SmartishTablePager Paginator="Pager"></RocketLaunchJournal.Web.Client.Shared.SmartishTablePager>
+                    </SmartishTable.Pagination>
+                </td>
+            </tr>
+        </tfoot>
     </table>
 </SmartishTable.Root>
 }
@@ -124,6 +128,11 @@ else
     private JsonElementComparer jsonElementComparer = new JsonElementComparer();
 
     protected override void OnInitialized()
+    {
+        columns = Dto.Columns.Where(w => w.InOutput).ToList();
+    }
+
+    protected override void OnParametersSet()
     {
         columns = Dto.Columns.Where(w => w.InOutput).ToList();
     }
