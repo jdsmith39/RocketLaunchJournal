@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿using Blazored.Modal;
+using Blazored.Modal.Services;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Forms;
 using RocketLaunchJournal.Infrastructure.Dtos.Adhoc;
@@ -14,6 +16,9 @@ namespace RocketLaunchJournal.Web.Client.Pages
 {
     public partial class Reports : IDisposable
     {
+        [Inject]
+        public IModalService ModalService { get; set; }
+
         [Inject]
         private AnonymousClient anonymousClient { get; set; }
         [Inject]
@@ -105,6 +110,8 @@ namespace RocketLaunchJournal.Web.Client.Pages
 
             var updatedReportSource = Dto.ReportSourceId != DtoOriginal.ReportSourceId;
             Dto.Update(DtoOriginal);
+
+            AddRemoveSortOrders();
             
             // must be last so event triggers after the rest is complete
             if (updatedReportSource)
@@ -127,6 +134,11 @@ namespace RocketLaunchJournal.Web.Client.Pages
                 return;
 
             DataDto = await anonymousClient.GenerateReport(Dto);
+            var parameters = new Blazored.Modal.ModalParameters();
+            parameters.Add(nameof(ShowReport.DataDtos), DataDto);
+            parameters.Add(nameof(ShowReport.Dto), Dto);
+            var modalReference = ModalService.Show<ShowReport>(Dto.Name, parameters, new ModalOptions() { });
+            var modalResult = await modalReference.Result;
         }
 
         private async Task DownloadReport()
@@ -224,7 +236,6 @@ namespace RocketLaunchJournal.Web.Client.Pages
             sourceColumns = await anonymousClient.GetReportSourceColumns(reportSource);
             // blazor does NOT know about the change in these kinds of events.
             StateHasChanged();
-        
         }
 
         #region Sorting
