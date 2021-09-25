@@ -66,16 +66,16 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
             adapter.SelectCommand = cmd;
             var dataSet = new DataSet();
             adapter.Fill(dataSet);
-            var colunns = new List<ReportSourceColumnDto>();
+            var columns = new List<ReportSourceColumnDto>();
             foreach (DataColumn item in dataSet.Tables[0].Columns)
             {
-                colunns.Add(new ReportSourceColumnDto() 
+                columns.Add(new ReportSourceColumnDto() 
                 {
                     Name = item.ColumnName,
                     TypeName = item.DataType.Name
                 });
             }
-            return colunns;
+            return columns;
         }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
                 if (item.Key)
                     query = query.Select(item.Columns.Select(s => s.Name).ToArray());
                 else
-                    query = query.SelectRaw(string.Join(',', item.Columns.Select(s => $"{s.Aggregate.GetShortDisplayName()}([{s.Name}]) as {s.Name}_{s.Aggregate.GetDisplayName()}").ToArray()));
+                    query = query.SelectRaw(string.Join(',', item.Columns.Select(s => $"{s.Aggregate.GetShortDisplayName()}([{s.Name}]) as {s.ColumnName}").ToArray()));
             }
         }
 
@@ -174,10 +174,10 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
                 switch (item.Sort!.Value)
                 {
                     case SortTypes.Ascending:
-                        query = query.OrderBy(item.Name);
+                        query = query.OrderBy(item.ColumnName);
                         break;
                     case SortTypes.Descending:
-                        query = query.OrderByDesc(item.Name);
+                        query = query.OrderByDesc(item.ColumnName);
                         break;
                 }
             }

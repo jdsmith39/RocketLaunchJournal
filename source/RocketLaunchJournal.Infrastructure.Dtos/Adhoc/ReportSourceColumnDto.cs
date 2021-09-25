@@ -44,5 +44,18 @@ namespace RocketLaunchJournal.Infrastructure.Dtos.Adhoc
 
             return false;
         }
+
+        public string ColumnName
+        {
+            get
+            {
+                var sb = new System.Text.StringBuilder();
+                sb.Append(Name);
+                if (Aggregate != AggregateTypes.GroupBy)
+                    sb.Append($"_{Aggregate.ToString()}");
+
+                return sb.ToString();
+            }
+        }
     }
 }
