@@ -59,13 +59,19 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
         public async Task<List<ReportSourceColumnDto>> GetReportSourceColumns(ReportSource dto)
         {
             var reportSource = await  db.ReportSources.FirstOrDefaultAsync(w => w.ReportSourceId == dto.ReportSourceId);
-            using var cmd = new SqlCommand();
-            cmd.Connection = db.Database.GetDbConnection() as SqlConnection;
+            using var cmd = (SqlCommand)db.Database.GetDbConnection().CreateCommand();
+            var isOpen = cmd.Connection.State == ConnectionState.Open;
+            if (!isOpen)
+                await cmd.Connection.OpenAsync();
+            //cmd.Connection = db.Database.GetDbConnection() as SqlConnection;
             cmd.CommandText = $"Select top 1 * From {reportSource.SQLName} Where 1 = 0";
             var adapter = new SqlDataAdapter();
             adapter.SelectCommand = cmd;
             var dataSet = new DataSet();
             adapter.Fill(dataSet);
+            if (!isOpen)
+                await cmd.Connection.CloseAsync();
+
             var columns = new List<ReportSourceColumnDto>();
             foreach (DataColumn item in dataSet.Tables[0].Columns)
             {
@@ -89,7 +95,7 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
             if (reportSource == null)
                 return null;
             var report = new ReportDataDto<object>();
-            var columns = GetReportSourceColumns(reportSource);
+            //var columns = await GetReportSourceColumns(reportSource);
             //report.RemovedColumns = CheckColumns(dto, columns);
             if (dto.Columns.Count == 0)
                 return report;
@@ -104,14 +110,22 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
             var compiler = new SqlServerCompiler();
             var result = compiler.Compile(query);
 
-            using var cmd = new SqlCommand();
-            cmd.Connection = db.Database.GetDbConnection() as SqlConnection;
+            using var cmd = (SqlCommand)db.Database.GetDbConnection().CreateCommand();
+            var isOpen = cmd.Connection.State == ConnectionState.Open;
+            if (!isOpen)
+                await cmd.Connection.OpenAsync();
+
             cmd.CommandText = result.RawSql;
             var adapter = new SqlDataAdapter();
             adapter.SelectCommand = cmd;
             var dataSet = new DataSet();
             adapter.Fill(dataSet);
+
+            if (!isOpen)
+                await cmd.Connection.CloseAsync();
+
             report.Data = dataSet.Tables[0].ToList().ToList();
+            
             return report;
         }
 
