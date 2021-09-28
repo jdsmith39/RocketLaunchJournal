@@ -7,7 +7,6 @@
   <title>Rocket Launch Journal</title>
   <base href="/" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
-  <!--<link href="css/bootstrap/bootstrap.min.css" rel="stylesheet" />-->
   <link href="_content/Blazored.Toast/blazored-toast.min.css" rel="stylesheet" />
   <link href="_content/Blazored.Modal/blazored-modal.css" rel="stylesheet" />
   <link href="_content/SmartishTable/smartish-table.css" rel="stylesheet" />
@@ -20,21 +19,24 @@
 <body class="">
   <app>
     <style>
-      .loaderTable {
-        width: 100%;
-        height: 100%;
-        top: 0px;
-        left: 0px;
-        position: fixed;
+      .loader {
+        height:100vh;
+        width:100vw;
         background-color: #ddd;
       }
+
+      .loader .row {
+        height:100vh;
+      }
     </style>
-    <table class="loaderTable">
-      <tr>
-        <td class="text-right align-middle"><i class="fas fa-spinner fa-5x fa-pulse"></i></td>
-        <td class="text-left pl-2"><strong>Loading...</strong></td>
-      </tr>
-    </table>
+    <div class="loader container-fluid">
+      <div class="row align-items-center">
+        <div class="col text-center">
+          <i class="fas fa-spinner fa-5x fa-pulse"></i>
+          <strong>Loading...</strong>
+        </div>
+      </div>
+    </div>
   </app>
 
   <div id="blazor-error-ui">

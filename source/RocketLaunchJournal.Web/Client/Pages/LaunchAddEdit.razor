@@ -5,8 +5,7 @@
       <div class="modal-header">
         <div class="col"><h5 class="modal-title">@BlazoredModal.Title</h5></div>
         <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
-        <button type="button" class="close" aria-label="Close" @onclick="BlazoredModal.CancelAsync">
-          <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" aria-label="Close" @onclick="BlazoredModal.CancelAsync">
         </button>
       </div>
       @if (_editContext != null)
@@ -25,7 +24,7 @@
               <EditNumber @bind-Value="Dto.LaunchNumber" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.LaunchNumber))" ValidationFor="(() => Dto.LaunchNumber)" />
               <EditDate @bind-Value="Dto.Date" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Date))" ValidationFor="(() => Dto.Date)" />
               <EditText @bind-Value="Dto.Motors" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Motors))" ValidationFor="(() => Dto.Motors)" />
-              <div class="form-row">
+              <div class="row gx-2">
                 <div class="col">
                   <EditNumber @bind-Value="Dto.Altitude" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Altitude))" ValidationFor="(() => Dto.Altitude)" LabelCss="@smallLabelCss" />
                   <EditNumber @bind-Value="Dto.TopSpeed" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.TopSpeed))" ValidationFor="(() => Dto.TopSpeed)" LabelCss="@smallLabelCss" />
@@ -43,12 +42,11 @@
               </div>
               
               <EditText @bind-Value="Dto.Note" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Note))" ValidationFor="(() => Dto.Note)" />
-              @*<EditCheckbox @bind-Value="@Dto.IsActive" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.IsActive))" />*@
             </div>
           </div>
           <div class="modal-footer">
             <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
-            <div class="col text-right"><ModalDefaultFooterButtons OnCancel="BlazoredModal.CancelAsync" /></div>
+            <div class="col text-end"><ModalDefaultFooterButtons OnCancel="BlazoredModal.CancelAsync" /></div>
           </div>
         </EditForm>
       }

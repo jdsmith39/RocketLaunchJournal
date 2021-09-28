@@ -1,11 +1,11 @@
-﻿<div class="form-row">
+﻿<div class="row gx-2">
   <div class="col-sm-auto">
-    <div class="form-row">
+    <div class="row gx-2">
       <div class="col-auto">
         <div class="form-control-plaintext">Display</div>
       </div>
       <div class="col-auto">
-        <select class="form-control" @bind="Paginator.PageSize">
+        <select class="form-select" @bind="Paginator.PageSize">
           @foreach (var item in RocketLaunchJournal.Web.Client.Helpers.Constants.PageSizes)
           {
     <option selected=@(item == Paginator.PageSize) value="@(item)">@item</option>}
@@ -27,7 +27,7 @@
       </button>
     </li>
     <li class="page-item">
-      <div class="form-row mx-1">
+      <div class="row gx-2 mx-1">
         <div class="col-auto">
           <div class="form-control-plaintext">Page</div>
         </div>

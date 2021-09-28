@@ -1,4 +1,4 @@
-﻿<div class="col-12 col-md-4 col-lg-3 col-xl-2 mb-2">
+﻿<div class="col-12 col-md-4 col-lg-3 col-xl-2">
   <div class="card h-100 @(showAll ? "bg-light" : "")">
     <div class="card-header" title="@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Name)) - @PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.LaunchNumber))">
       <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.LaunchAddEditDelete">

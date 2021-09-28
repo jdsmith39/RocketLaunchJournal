@@ -1,7 +1,7 @@
 ﻿@typeparam TValue
 @inherits InputBase<TValue>
 
-<div class="form-group form-row">
+<div class="mb-3 row gx-2">
   <label for="@($"{_predicate}{nameSuffix}")" class="col-form-label col-sm-3">
     <DefaultLabel Name=@PropertyReflections.GetLabelName(PropertyInfo) IsRequired="@PropertyReflections.IsRequired(PropertyInfo)"></DefaultLabel>
     <InputUnsavedChangesNotifcation Value="@(!oldValue.Equals(CurrentValue))" />

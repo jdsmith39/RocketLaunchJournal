@@ -22,12 +22,12 @@ else
           }
         </EditSelect>
 
-        <div class="form-group form-row">
+        <div class="mb-3 row gx-2">
           <label for="selectReport" class="col-form-label col-sm-3">
             Select Report
           </label>
           <div class="col-sm">
-            <select @bind="SelectedReportId" id="selectReport" type="text" class="form-control">
+            <select @bind="SelectedReportId" id="selectReport" type="text" class="form-select">
               <option value="0">Create New...</option>
               @foreach (var item in GetReports())
               {
@@ -40,7 +40,7 @@ else
       <div class="col-sm-6">
         <AuthorizeView>
           <Authorized Context="authorizedContext">
-            <div class="form-group form-row">
+            <div class="mb-3 row gx-2">
               <div class="col-sm-12">
                 <div class="form-check">
                   <label class="form-check-label">
@@ -54,7 +54,7 @@ else
         </AuthorizeView>
       </div>
     </div>
-    <div class="form-row mb-2">
+    <div class="row gx-2 mb-2">
       <div class="col-3">
         <SmartishTable.Root @ref="SourceTable" SafeList="sourceColumns" HeaderTag="div">
           <div class="card">
@@ -88,7 +88,7 @@ else
         <SmartishTable.Root @ref="SelectedTable" SafeList="Dto.Columns">
           <div class="card">
             <div class="card-header">
-              <div class="form-row">
+              <div class="row gx-2">
                 <div class="col-sm-auto">Name (@Dto?.Columns?.Count)</div>
                 <div class="col-sm text-sm-right">
                   <button type="submit" class="btn btn-outline-info btn-sm" @onclick="(() => GenerateReport() )"><span class="icon-x25">🗠</span> Show Report</button>
@@ -114,14 +114,14 @@ else
                       </div>
                     </td>
                     <td>
-                      <div class="form-row">
+                      <div class="row gx-2">
                         <div class="col-3">
                           <div class="form-inline">
                             <div class="form-control-plaintext">@row.Item.Name - @row.Item.TypeName</div>
                           </div>
                         </div>
                         <div class="col text-sm-right">
-                          <div class="form-row">
+                          <div class="row gx-2">
                             <div class="col-auto form-inline">
                               <div class="form-check mr-sm-2">
                                 <InputCheckbox @bind-Value="row.Item.InOutput" class="form-check-input" id="@string.Format(outputIdFormat, row.Index)" />
@@ -133,7 +133,7 @@ else
                               <label for="@string.Format(sortIdFormat, row.Index)" class="mr-sm-2">
                                 Sort
                               </label>
-                              <InputSelect ValueExpression="@(() => row.Item.Sort)" Value="@row.Item.Sort" ValueChanged="@((SortTypes? value) => SortChanged(row.Item, value))" class="form-control form-control-sm mr-sm-2" id="@string.Format(sortIdFormat, row.Index)">
+                              <InputSelect ValueExpression="@(() => row.Item.Sort)" Value="@row.Item.Sort" ValueChanged="@((SortTypes? value) => SortChanged(row.Item, value))" class="form-select form-select-sm mr-sm-2" id="@string.Format(sortIdFormat, row.Index)">
                                 <option value="">None</option>
                                 @foreach (var item in sortTypes)
                             {
@@ -146,7 +146,7 @@ else
                               <label for="@string.Format(sortOrderIdFormat, row.Index)" class="mr-sm-2">
                                 Sort Order
                               </label>
-                              <InputSelect ValueExpression="@(() => row.Item.SortOrder)" Value="@row.Item.SortOrder" ValueChanged="@((int? value) => SortOrderChanged(row.Item, value))" class="form-control form-control-sm mr-sm-2" id="@string.Format(sortOrderIdFormat, row.Index)">
+                              <InputSelect ValueExpression="@(() => row.Item.SortOrder)" Value="@row.Item.SortOrder" ValueChanged="@((int? value) => SortOrderChanged(row.Item, value))" class="form-select form-select-sm mr-sm-2" id="@string.Format(sortOrderIdFormat, row.Index)">
                                 <option value="">None</option>
                                 @foreach (var item in sortOrders)
                             {
@@ -159,7 +159,7 @@ else
                               <label for="@string.Format(aggregateIdFormat, row.Index)" class="mr-sm-2">
                                 Aggregate
                               </label>
-                              <InputSelect @bind-Value="row.Item.Aggregate" class="form-control form-control-sm mr-sm-2" id="@string.Format(aggregateIdFormat, row.Index)">
+                              <InputSelect @bind-Value="row.Item.Aggregate" class="form-select form-select-sm mr-sm-2" id="@string.Format(aggregateIdFormat, row.Index)">
                                 @foreach (var item in aggregates)
                             {
                             <option selected=@(row.Item.Aggregate == item) value="@item">@item.GetDisplayName()</option>
@@ -169,7 +169,7 @@ else
                           </div>
                         </div>
                       </div>
-                      <div class="form-row">
+                      <div class="row gx-2">
                         <div class="col-auto">Filter...</div>
                       </div>
                     </td>

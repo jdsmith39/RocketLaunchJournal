@@ -1,47 +1,58 @@
-﻿<div class="col-12 mb-2">
-  <div class="card @(showAll ? "bg-light" : "")">
-    <div class="card-header" title="@PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.Name)) - @PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.NumberOfLaunches))">
-      <div class="float-left">
-        <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.RocketAddEditDelete">
-          <Authorized Context="AuthorizedContext">
-            @if (userInfo.UserId == Dto.UserId)
-            {
-              <button class="btn btn-sm btn-link" @onclick="@(() => AddEditAsync.InvokeAsync(Index))"><span class="fa fa-edit"></span> @Header</button>
-            }
-            else
-            {
-              <text>
-                @Header
-              </text>
-            }
-          </Authorized>
-          <NotAuthorized Context="NotAuthorizedContext">
-            @Header
-          </NotAuthorized>
-        </AuthorizeView>
-      </div>
-      <button class="btn btn-sm btn-outline-info float-right" @onclick="@(async () => await LoadLaunchesAsync.InvokeAsync(Dto))">View Launches</button>
-    </div>
-    <div class="card-body canSelect" @onclick="@(() => showAll =!showAll)">
-      <div class="hover form-row" title="@PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.LastLaunchDate))">
-        <div class="col-4 col-xl-5">@PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.LastLaunchDate), false) </div>
-        <div class="col">
-          @Dto.LastLaunchDate?.ToShortDateString()
+﻿<div class="col-12">
+    <div class="card @(showAll ? "bg-light" : "")">
+        <div class="card-header" title="@PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.Name)) - @PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.NumberOfLaunches))">
+            <div class="row">
+                <div class="col">
+                    <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.RocketAddEditDelete">
+                        <Authorized Context="AuthorizedContext">
+                            @if (userInfo.UserId == Dto.UserId)
+                {
+                            <button class="btn btn-sm btn-link" @onclick="@(() => AddEditAsync.InvokeAsync(Index))"><span class="fa fa-edit"></span> @Header</button>
+                            }
+                else
+                {
+                            <text>
+                                @Header
+                            </text>
+                            }
+                        </Authorized>
+                        <NotAuthorized Context="NotAuthorizedContext">
+                            @Header
+                        </NotAuthorized>
+                    </AuthorizeView>
+                </div>
+                <div class="col text-end">
+                    <button class="btn btn-sm btn-outline-info" @onclick="@(async () => await LoadLaunchesAsync.InvokeAsync(Dto))">
+                        <span class="fas fa-space-shuttle" aria-hidden="true">&nbsp;</span>Launches
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-      <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.Weight)" Value="@Dto.Weight" Unit="g"></EditCardRow>
-      <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.WeightInOunces)" Value="@Dto.WeightInOunces" Unit="oz"></EditCardRow>
-      <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.Recovery)" Value="@Dto.Recovery"></EditCardRow>
-      @if (showAll)
-      {
-        <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.Length)" Value="@Dto.Length" Unit="m"></EditCardRow>
-        <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.Diameter)" Value="@Dto.Diameter" Unit="mm"></EditCardRow>
-        <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.BlackPowderForApogee)" Value="@Dto.BlackPowderForApogee" Unit="g"></EditCardRow>
-        <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.BlackPowderForMain)" Value="@Dto.BlackPowderForMain" Unit="g"></EditCardRow>
-      }
-      <div>@PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.IsActive)) <IsActive Value="@Dto.IsActive" /></div>
+        <div class="card-body canSelect" @onclick="@(() => showAll =!showAll)">
+            <div class="hover row gx-2" title="@PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.LastLaunchDate))">
+                <div class="col-4 col-xl-5">@PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.LastLaunchDate), false) </div>
+                <div class="col">
+                    @Dto.LastLaunchDate?.ToShortDateString()
+                </div>
+            </div>
+            <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.Weight)" Value="@Dto.Weight" Unit="g"></EditCardRow>
+            <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.WeightInOunces)" Value="@Dto.WeightInOunces" Unit="oz"></EditCardRow>
+            <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.Recovery)" Value="@Dto.Recovery"></EditCardRow>
+            @if (showAll)
+            {
+                <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.Length)" Value="@Dto.Length" Unit="m"></EditCardRow>
+                <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.Diameter)" Value="@Dto.Diameter" Unit="mm"></EditCardRow>
+                <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.BlackPowderForApogee)" Value="@Dto.BlackPowderForApogee" Unit="g"></EditCardRow>
+                <EditCardRow DtoProperties="dtoProperties" PropertyName="@nameof(RocketDto.BlackPowderForMain)" Value="@Dto.BlackPowderForMain" Unit="g"></EditCardRow>
+            }
+            <div class="hover row gx-2">
+                <div class="col-4 col-xl-5">@PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.IsActive)) </div>
+                <div class="col">
+                    <IsActive Value="@Dto.IsActive" />
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 @code {
@@ -70,7 +81,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-      var authState = await authenticationStateTask;
-      userInfo = new RocketLaunchJournal.Web.Shared.UserIdentity.UserClaimBuilder(authState.User);
+        var authState = await authenticationStateTask;
+        userInfo = new RocketLaunchJournal.Web.Shared.UserIdentity.UserClaimBuilder(authState.User);
     }
 }

@@ -1,50 +1,50 @@
 ﻿<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark position-absolute-md">
-  @*<div class="top-row pl-4 navbar navbar-dark">*@
-    <a class="navbar-brand" href="">Rocket Launch Journal</a>
-  @*</div>*@
-  <button class="navbar-toggler" @onclick="ToggleNavMenu">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse navbarCollapse @NavMenuCssClass">
-    <ul class="navbar-nav mr-auto ">
-      <li class="nav-item">
-        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-          <span class="fas fa-home fa-fw" aria-hidden="true">&nbsp;</span> Home
-        </NavLink>
-      </li>
-      <li class="nav-item">
-        <NavLink class="nav-link" href="rockets">
-          <span class="fas fa-rocket fa-fw" aria-hidden="true">&nbsp;</span> Rockets
-        </NavLink>
-      </li>
-      <li class="nav-item">
-        <NavLink class="nav-link" href="launches">
-          <span class="fas fa-space-shuttle fa-fw" aria-hidden="true">&nbsp;</span> Launches
-        </NavLink>
-      </li>
-      <li class="nav-item">
-        <NavLink class="nav-link" href="reports">
-          <span class="fas fa-clipboard-list fa-fw" aria-hidden="true">&nbsp;</span> Reports
-        </NavLink>
-      </li>
-      <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.UserAddEditDelete">
-        <li class="nav-item">
-          <NavLink class="nav-link" href="users">
-            <span class="fas fa-users fa-fw" aria-hidden="true">&nbsp;</span> Users
-          </NavLink>
-        </li>
-      </AuthorizeView>
-    </ul>
-    <LoginDisplay />
-  </div>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Rocket Launch Journal</a>
+        <button class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse navbarCollapse @NavMenuCssClass">
+            <ul class="navbar-nav me-auto ">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="fas fa-home fa-fw" aria-hidden="true">&nbsp;</span> Home
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="rockets">
+                        <span class="fas fa-rocket fa-fw" aria-hidden="true">&nbsp;</span> Rockets
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="launches">
+                        <span class="fas fa-space-shuttle fa-fw" aria-hidden="true">&nbsp;</span> Launches
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="reports">
+                        <span class="fas fa-clipboard-list fa-fw" aria-hidden="true">&nbsp;</span> Reports
+                    </NavLink>
+                </li>
+                <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.UserAddEditDelete">
+                    <li class="nav-item">
+                        <NavLink class="nav-link" href="users">
+                            <span class="fas fa-users fa-fw" aria-hidden="true">&nbsp;</span> Users
+                        </NavLink>
+                    </li>
+                </AuthorizeView>
+            </ul>
+            <LoginDisplay />
+        </div>
+    </div>
 </nav>
 @code {
-  private bool collapseNavMenu = true;
+    private bool collapseNavMenu = true;
 
-  private string? NavMenuCssClass => collapseNavMenu ? null : "show";
+    private string? NavMenuCssClass => collapseNavMenu ? null : "show";
 
-  private void ToggleNavMenu()
-  {
-    collapseNavMenu = !collapseNavMenu;
-  }
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
 }

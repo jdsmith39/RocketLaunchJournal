@@ -1,11 +1,11 @@
 @page "/rockets"
 <div class="row">
   <div class="col-sm-6 col-12">
-    <div class="form-row">
+    <div class="row gx-2">
       <div class="col-sm-6">
         <h3>Rockets</h3>
       </div>
-      <div class="col-sm-6 text-right">
+      <div class="col-sm-6 text-end">
         <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.RocketAddEditDelete">
           <button type="button" class="btn btn-primary" @onclick="@(() => AddEditRocketAsync(-1))" accesskey="A"><i class="fas fa-plus"></i> Add New</button>
         </AuthorizeView>
@@ -18,13 +18,13 @@
     else
     {
       <SmartishTable.Root SafeList="list" @ref="rocketsTable" OnDataUpdated="OnDataUpdated">
-        <div class="form-row">
+        <div class="row gx-2">
           <div class="col-6">
             <SmartishTable.FilterString TItem="RocketDto" Field="x=>x.Name" Context="filterContext">
               <input type="text" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm mb-1" placeholder="Search Rockets..." />
             </SmartishTable.FilterString>
           </div>
-          <div class="col-6 text-right">
+          <div class="col-6 text-end">
             <SmartishTable.FilterBoolean TItem="RocketDto" Field="x=>x.IsActive" Operator="activeOnly">
               <div class="form-check">
                 <label class="form-check-label">
@@ -35,7 +35,7 @@
             </SmartishTable.FilterBoolean>
           </div>
         </div>
-        <div class="form-row rockets-cards">
+        <div class="row gx-2 gy-2 rockets-cards">
           <SmartishTable.Repeater TItem="RocketDto" Context="row">
             <RocketEditCard Dto="row.Item" AddEditAsync="AddEditRocketAsync" LoadLaunchesAsync="LoadLaunchesAsync" Index="row.Index"></RocketEditCard>
           </SmartishTable.Repeater>
@@ -44,8 +44,9 @@
     }
   </div>
   <div class="col-sm-6 col-12">
+      @selectedItem?.SerializeJson()
     @if (selectedItem != null)
-    {<div class="form-row">
+    {<div class="row gx-2 gy-2">
         <div class="col-sm-6">
           <h3>
             <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.RocketAddEditDelete">
@@ -67,19 +68,14 @@
             </AuthorizeView>
           </h3>
         </div>
-        <div class="col-sm-6 text-right">
+        <div class="col-sm-6 text-end">
           <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.LaunchAddEditDelete">
             <button type="button" class="btn btn-primary" @onclick="@(() => AddEditLaunchForSelectedRocketAsync(-1))" accesskey="L"><i class="fas fa-plus"></i> Add Launch</button>
           </AuthorizeView>
         </div>
       </div>
-      <div class="form-row">
-        <div class="col-sm-6">
-
-        </div>
-      </div>
     }
-    <div class="form-row rockets-launch-cards">
+    <div class="row gx-2 gy-2 rockets-launch-cards">
       @if (launches != null)
       {
         <SmartishTable.Root @ref="launchesTable" SafeList="launches">
@@ -101,7 +97,7 @@
 @inject IModalService ModalService
 @inject AnonymousClient anonymousClient
 @code {
-  private List<RocketDto>? list;
+    private List<RocketDto>? list;
 
   private List<LaunchDto>? launches = null;
 
@@ -144,7 +140,8 @@
   }
 
   protected async Task LoadLaunchesAsync(RocketDto dto)
-  {
+    {
+        Console.WriteLine("hi");
     selectedItem = dto;
     loadingLaunches = true;
     launches = null;

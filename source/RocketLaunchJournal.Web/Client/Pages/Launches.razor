@@ -4,7 +4,7 @@
   <div class="col-sm-6">
     <h3>Launches</h3>
   </div>
-  <div class="col-sm-6 text-right">
+  <div class="col-sm-6 text-end">
     <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.LaunchAddEditDelete">
       <button type="button" class="btn btn-primary" @onclick="@(() => AddEditAsync(-1))" accesskey="A"><i class="fas fa-plus"></i> Add New</button>
     </AuthorizeView>
@@ -30,7 +30,7 @@ else
         </tr>
         <tr>
           <td>
-            <select @bind="nameOperator" class="form-control form-control-sm">
+            <select @bind="nameOperator" class="form-select form-select-sm">
               @foreach (var item in SmartishTable.Filters.StringOperators.Equals.GetList())
               {
                 <option value="@item">@item.GetDisplayName()</option>
@@ -41,7 +41,7 @@ else
             </SmartishTable.FilterString>
           </td>
           <td>
-            <select @bind="launchNumberOperator" class="form-control form-control-sm">
+            <select @bind="launchNumberOperator" class="form-select form-select-sm">
               @foreach (var item in SmartishTable.Filters.NumericOperators.Equals.GetList())
               {
                 <option value="@item">@item.GetDisplayName()</option>
@@ -52,7 +52,7 @@ else
             </SmartishTable.FilterNumeric>
           </td>
           <td>
-            <select @bind="launchDateOperator" class="form-control form-control-sm">
+            <select @bind="launchDateOperator" class="form-select form-select-sm">
               @foreach (var item in SmartishTable.Filters.DateTimeOperators.Equals.GetList())
               {
                 <option value="@item">@item.GetDisplayName()</option>
@@ -63,7 +63,7 @@ else
             </SmartishTable.FilterDateTime>
           </td>
           <td>
-            <select @bind="motorsOperator" class="form-control form-control-sm">
+            <select @bind="motorsOperator" class="form-select form-select-sm">
               @foreach (var item in SmartishTable.Filters.StringOperators.Equals.GetList())
               {
                 <option value="@item">@item.GetDisplayName()</option>
@@ -74,7 +74,7 @@ else
             </SmartishTable.FilterString>
           </td>
           <td>
-            <select @bind="altitudeOperator" class="form-control form-control-sm">
+            <select @bind="altitudeOperator" class="form-select form-select-sm">
               @foreach (var item in SmartishTable.Filters.NumericOperators.Equals.GetList())
               {
                 <option value="@item">@item.GetDisplayName()</option>
@@ -85,7 +85,7 @@ else
             </SmartishTable.FilterNumeric>
           </td>
           <td>
-            <select @bind="topSpeedOperator" class="form-control form-control-sm">
+            <select @bind="topSpeedOperator" class="form-select form-select-sm">
               @foreach (var item in SmartishTable.Filters.NumericOperators.Equals.GetList())
               {
                 <option value="@item">@item.GetDisplayName()</option>
@@ -130,7 +130,7 @@ else
           {
             <tr>
               <td colspan="6">
-                <div class="form-row">
+                <div class="row gx-2">
                   <div class="col">
                     <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.BurnTime)" Value="@row.Item.BurnTime" Unit="s"></LaunchCardRow>
                   </div>
@@ -144,7 +144,7 @@ else
                     <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.CoastToApogeeTime)" Value="@row.Item.CoastToApogeeTime" Unit="s"></LaunchCardRow>
                   </div>
                 </div>
-                <div class="form-row">
+                <div class="row gx-2">
                   <div class="col">
                     <LaunchCardRow DtoProperties="dtoProperties" IsBold="false" PropertyName="@nameof(LaunchDto.ApogeeToEjectionTime)" Value="@row.Item.ApogeeToEjectionTime" Unit="s"></LaunchCardRow>
                   </div>

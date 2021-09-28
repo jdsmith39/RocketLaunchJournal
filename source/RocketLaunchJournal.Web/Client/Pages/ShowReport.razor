@@ -5,10 +5,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <div class="col"><h5 class="modal-title">@BlazoredModal.Title</h5></div>
-                <button type="button" class="close" aria-label="Close" @onclick="BlazoredModal.CancelAsync">
-                    <span aria-hidden="true">&times;</span>
+                <button type="button" class="btn-close" aria-label="Close" @onclick="BlazoredModal.CancelAsync">
                 </button>
             </div>
+            <div class="modal-body">
             @if (Dto == null)
             {
                 <p><em>Loading...</em></p>
@@ -113,6 +113,12 @@
                 </table>
             </SmartishTable.Root>
             }
+            </div>
+            <div class="modal-footer">
+                <div class="col text-end">
+                    <button type="button" class="btn btn-outline-warning" @onclick="@(e => BlazoredModal.CancelAsync())" accesskey="C"><i class="fas fa-window-close"></i> Close</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

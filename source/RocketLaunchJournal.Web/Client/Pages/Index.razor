@@ -15,7 +15,7 @@
 else
 {
   <SmartishTable.Root SafeList="list" @ref="launchTable">
-    <div class="form-row">
+    <div class="row gx-2 gy-2">
       <SmartishTable.Repeater TItem="LaunchDto" Context="row">
         <LaunchCard Dto="row.Item" AddEditAsync="AddEditLaunchAsync" Index="row.Index"></LaunchCard>
       </SmartishTable.Repeater>

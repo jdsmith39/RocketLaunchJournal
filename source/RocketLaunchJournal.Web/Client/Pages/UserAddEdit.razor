@@ -6,8 +6,7 @@
       <div class="modal-header">
         <div class="col"><h5 class="modal-title">@BlazoredModal.Title</h5></div>
         <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
-        <button type="button" class="close" aria-label="Close" @onclick="BlazoredModal.CancelAsync">
-          <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" aria-label="Close" @onclick="BlazoredModal.CancelAsync">
         </button>
       </div>
       <EditForm EditContext="_editContext" OnValidSubmit="Save">
@@ -32,12 +31,11 @@
 
             <EditCheckbox @bind-Value="@Dto.IsLoginEnabled" PropertyInfo="Dto.GetType().GetProperty(nameof(Dto.IsLoginEnabled))" />
             <EditCheckbox @bind-Value="@Dto.IsActive" PropertyInfo="Dto.GetType().GetProperty(nameof(Dto.IsActive))" />
-
           </div>
         </div>
         <div class="modal-footer">
           <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
-          <div class="col text-right"><ModalDefaultFooterButtons OnCancel="BlazoredModal.CancelAsync" /></div>
+          <div class="col text-end"><ModalDefaultFooterButtons OnCancel="BlazoredModal.CancelAsync" /></div>
         </div>
       </EditForm>
     </div>
