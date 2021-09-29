@@ -21,7 +21,7 @@
         <div class="row gx-2">
           <div class="col-6">
             <SmartishTable.FilterString TItem="RocketDto" Field="x=>x.Name" Context="filterContext">
-              <input type="text" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm mb-1" placeholder="Search Rockets..." />
+              <input type="text" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm mb-1" placeholder="Search Rockets..." />
             </SmartishTable.FilterString>
           </div>
           <div class="col-6 text-end">
@@ -44,7 +44,6 @@
     }
   </div>
   <div class="col-sm-6 col-12">
-      @selectedItem?.SerializeJson()
     @if (selectedItem != null)
     {<div class="row gx-2 gy-2">
         <div class="col-sm-6">
@@ -117,9 +116,12 @@
   private RocketLaunchJournal.Web.Shared.UserIdentity.UserClaimBuilder userInfo;
 
   protected Task OnDataUpdated()
-  {
-    selectedItem = null;
-    launches = null;
+    {
+        if (!loadingLaunches)
+        {
+            selectedItem = null;
+            launches = null;
+        }
     return Task.CompletedTask;
   }
 
@@ -141,7 +143,6 @@
 
   protected async Task LoadLaunchesAsync(RocketDto dto)
     {
-        Console.WriteLine("hi");
     selectedItem = dto;
     loadingLaunches = true;
     launches = null;

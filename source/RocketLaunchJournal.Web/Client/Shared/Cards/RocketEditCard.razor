@@ -52,6 +52,20 @@
                 </div>
             </div>
         </div>
+        <div class="card-footer text-center canSelect" @onclick="@(() => showAll =!showAll)">
+            @if (showAll)
+            {
+                <text>
+                    <i class="fas fa-chevron-up">&nbsp;</i> see less
+                </text>
+            }
+            else
+            {
+                <text>
+                    <i class="fas fa-chevron-down">&nbsp;</i> see more
+                </text>
+            }
+        </div>
     </div>
 </div>
 
