@@ -93,6 +93,17 @@
                                         case "boolean":
                                             <td><IsActive Value="@row.Item[item.ColumnName].GetBoolean()" /></td>
                                             break;
+                                        case "dateonly":
+                                        case "datetime":
+                                            @if (DateTime.TryParse(row.Item[item.ColumnName].GetString(), out DateTime value))
+                                            {
+                                                <td>@value.ToString("yyyy-MM-dd")</td>
+                                            }
+                                            else
+                                            {
+                                                <td></td>
+                                            }
+                                            break;
                                         default:
                                             <td>@row.Item[item.ColumnName]</td>
                                             break;

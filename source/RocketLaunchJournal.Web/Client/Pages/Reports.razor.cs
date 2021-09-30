@@ -71,7 +71,8 @@ namespace RocketLaunchJournal.Web.Client.Pages
         internal List<System.Reflection.PropertyInfo> dtoProperties = typeof(ReportDto).GetProperties().ToList();
         private List<SortTypes> sortTypes = SortTypes.Ascending.GetList();
         private List<int> sortOrders = new List<int>() { 1 };
-        private List<AggregateTypes> aggregates = AggregateTypes.Average.GetList().OrderBy(o=>o.GetDisplayName()).ToList();
+        private List<AggregateTypes> otherAggregates = new[] { AggregateTypes.Count, AggregateTypes.GroupBy }.ToList();
+        private List<AggregateTypes> numberAggregates = AggregateTypes.Average.GetList().OrderBy(o => o.GetDisplayName()).ToList();
         private string outputIdFormat = "output{0}";
         private string sortIdFormat = "sort{0}";
         private string sortOrderIdFormat = "sortOrder{0}";
