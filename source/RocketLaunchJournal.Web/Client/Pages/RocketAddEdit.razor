@@ -22,7 +22,6 @@
             <EditNumber @bind-Value="Dto.BlackPowderForMain" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.BlackPowderForMain))" ValidationFor="(() => Dto.BlackPowderForMain)" />
 
             <EditCheckbox @bind-Value="@Dto.IsActive" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.IsActive))" />
-
           </div>
         </div>
         <div class="modal-footer">
@@ -59,7 +58,7 @@
     }
   }
 
-  protected async override Task OnInitializedAsync()
+  protected override void OnInitialized()
   {
     if (DtoOriginal == null)
     {
@@ -70,7 +69,7 @@
       };
     }
 
-    Dto = DtoOriginal.SerializeJson().DeserializeJson<RocketLaunchJournal.Infrastructure.Dtos.RocketDto>();
+    Dto = DtoOriginal.SerializeJson().DeserializeJson<RocketLaunchJournal.Infrastructure.Dtos.RocketDto>()!;
 
     _editContext = new EditContext(Dto);
   }

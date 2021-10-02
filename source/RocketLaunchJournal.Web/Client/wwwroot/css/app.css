@@ -189,16 +189,16 @@ app {
     }
 }
 
-.blazored-toast-container {
-    z-index: 10000 !important;
+/*********** ad hoc page *****************/
+.adhoc-column-lists {
+    display: block;
+    max-height: 40rem;
+    overflow-y: auto;
+    overflow-x: clip;
 }
 
-.hover:hover {
-    background-color:lightgrey;
-}
-
-.canSelect{
-    cursor:pointer;
+.adhoc-row:nth-child(even) {
+    background-color: #f2f2f2;
 }
 
 /****** rockets page **************/
@@ -223,4 +223,16 @@ app {
 
 .icon-x25 {
     font-size: 1.25em;
+}
+
+.blazored-toast-container {
+    z-index: 10000 !important;
+}
+
+.canSelect{
+    cursor:pointer;
+}
+
+.hover:hover {
+    background-color: lightgrey;
 }

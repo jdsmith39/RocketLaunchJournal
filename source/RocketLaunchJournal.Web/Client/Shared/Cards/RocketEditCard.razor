@@ -1,7 +1,7 @@
 ﻿<div class="col-12">
     <div class="card @(showAll ? "bg-light" : "")">
         <div class="card-header" title="@PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.Name)) - @PropertyReflections.GetLabelName(dtoProperties, nameof(RocketDto.NumberOfLaunches))">
-            <div class="row">
+            <div class="row align-items-center">
                 <div class="col">
                     <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.RocketAddEditDelete">
                         <Authorized Context="AuthorizedContext">
@@ -22,7 +22,7 @@
                     </AuthorizeView>
                 </div>
                 <div class="col text-end">
-                    <button class="btn btn-sm btn-outline-info" @onclick="@(async () => await LoadLaunchesAsync.InvokeAsync(Dto))">
+                    <button class="btn btn-sm btn-outline-info" @onclick="@(() => LoadLaunchesAsync.InvokeAsync(Dto))">
                         <span class="fas fa-space-shuttle" aria-hidden="true">&nbsp;</span>Launches
                     </button>
                 </div>

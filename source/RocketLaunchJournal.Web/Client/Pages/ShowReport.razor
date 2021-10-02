@@ -36,7 +36,7 @@
                                             if (!stringOperators.ContainsKey(item.ColumnName))
                                                 stringOperators[item.ColumnName] = SmartishTable.Filters.StringOperators.Contains;
                                             <text>
-                                                <select @bind="stringOperators[item.ColumnName]" class="form-control form-control-sm">
+                                                <select @bind="stringOperators[item.ColumnName]" class="form-select form-select-sm">
                                                     @foreach (var enumItem in SmartishTable.Filters.StringOperators.Equals.GetList())
                                                     {
                                                         <option value="@enumItem">@enumItem.GetDisplayName()</option>
@@ -53,7 +53,7 @@
                                             if (!numericOperators.ContainsKey(item.ColumnName))
                                                 numericOperators[item.ColumnName] = SmartishTable.Filters.NumericOperators.GreaterThanOrEqual;
                                             <text>
-                                                <select @bind="numericOperators[item.ColumnName]" class="form-control form-control-sm">
+                                                <select @bind="numericOperators[item.ColumnName]" class="form-select form-select-sm">
                                                     @foreach (var enumItem in SmartishTable.Filters.NumericOperators.Equals.GetList())
                                                     {
                                                         <option value="@enumItem">@enumItem.GetDisplayName()</option>
@@ -68,7 +68,7 @@
                                             if (!booleanOperators.ContainsKey(item.ColumnName))
                                                 booleanOperators[item.ColumnName] = SmartishTable.Filters.BooleanOperators.Equals;
                                             <text>
-                                                <select @bind="booleanOperators[item.ColumnName]" class="form-control form-control-sm">
+                                                <select @bind="booleanOperators[item.ColumnName]" class="form-select form-select-sm">
                                                     <option value="@SmartishTable.Filters.BooleanOperators.Equals">All</option>
                                                     @foreach (var enumItem in SmartishTable.Filters.BooleanOperators.Equals.GetList().Where(w => ((byte)w) > 8))
                                                     {

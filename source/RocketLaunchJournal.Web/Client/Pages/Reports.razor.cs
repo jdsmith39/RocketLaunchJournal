@@ -73,6 +73,7 @@ namespace RocketLaunchJournal.Web.Client.Pages
         private List<int> sortOrders = new List<int>() { 1 };
         private List<AggregateTypes> otherAggregates = new[] { AggregateTypes.Count, AggregateTypes.GroupBy }.ToList();
         private List<AggregateTypes> numberAggregates = AggregateTypes.Average.GetList().OrderBy(o => o.GetDisplayName()).ToList();
+        private List<AggregateTypes> dateAggregates = AggregateTypes.Average.GetList().Where(w=>w != AggregateTypes.Sum && w != AggregateTypes.Average).OrderBy(o => o.GetDisplayName()).ToList();
         private string outputIdFormat = "output{0}";
         private string sortIdFormat = "sort{0}";
         private string sortOrderIdFormat = "sortOrder{0}";
