@@ -1,6 +1,6 @@
 ﻿using IdentityModel;
-using IdentityServer4;
-using IdentityServer4.Models;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Models;
 using RocketLaunchJournal.Web.Shared;
 using RocketLaunchJournal.Web.Shared.UserIdentity;
 using System.Collections.Generic;
@@ -51,9 +51,9 @@ namespace RocketLaunchJournal.Web.Server
                 }
             };
 
-        public static IEnumerable<IdentityServer4.Models.Client> GetClients() =>
-            new List<IdentityServer4.Models.Client> {
-                new IdentityServer4.Models.Client {
+        public static IEnumerable<Duende.IdentityServer.Models.Client> GetClients() =>
+            new List<Duende.IdentityServer.Models.Client> {
+                new Duende.IdentityServer.Models.Client {
                     ClientName = "RocketLaunchJournal.Web.Client",
                     ClientId = "RocketLaunchJournal.Web.Client",
                     ClientSecrets = {  },
