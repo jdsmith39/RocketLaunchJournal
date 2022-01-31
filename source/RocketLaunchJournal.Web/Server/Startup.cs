@@ -69,9 +69,6 @@ namespace RocketLaunchJournal.Web.Server
             //services.AddTransient<Infrastructure.ActionFilters.DenyIfIpAddressChangedFilter>();
             //services.AddTransient<Infrastructure.ActionFilters.IpWhiteListFilter>();
             //services.AddTransient<Infrastructure.ActionFilters.LogRequestResponseFilter>();
-
-            // httpclient factories *************************************
-            //services.AddHttpClient<ReCAPTCHAClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -191,8 +188,6 @@ namespace RocketLaunchJournal.Web.Server
             var dbConnection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DataContext>(options => options.UseSqlServer(dbConnection));
             services.AddDbContext<ILoggingContext, DataContext>(options => options.UseSqlServer(dbConnection));
-
-            //services.Configure<ReCAPTCHASettings>(Configuration.GetSection(nameof(ReCAPTCHASettings)));
 
             services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Templates.Emails.EmailsCreate>();
             services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Launches.LaunchesCreateUpdate>();

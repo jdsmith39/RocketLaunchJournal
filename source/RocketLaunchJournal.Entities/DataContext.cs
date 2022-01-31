@@ -1,5 +1,6 @@
-using IdentityServer4.EntityFramework.Entities;
-using IdentityServer4.EntityFramework.Extensions;
+using Duende.IdentityServer.EntityFramework.Entities;
+using Duende.IdentityServer.EntityFramework.Extensions;
+using Duende.IdentityServer.EntityFramework.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace RocketLaunchJournal.Entities
 {
-    public class DataContext : DbContext, ILoggingContext, IdentityServer4.EntityFramework.Interfaces.IPersistedGrantDbContext
+    public class DataContext : DbContext, ILoggingContext, IPersistedGrantDbContext
     {
         public DataContext(UserPermissionService ups, DbContextOptions<DataContext> options, ILogger<DataContext>? logger) : base(options)
         {
@@ -36,9 +37,8 @@ namespace RocketLaunchJournal.Entities
             base.OnModelCreating(modelBuilder);
 
             // using defaults
-            modelBuilder.ConfigurePersistedGrantContext(new IdentityServer4.EntityFramework.Options.OperationalStoreOptions() 
+            modelBuilder.ConfigurePersistedGrantContext(new Duende.IdentityServer.EntityFramework.Options.OperationalStoreOptions() 
             {
-                
             });
 
             // configure all decimal types to have the same precision.  Override after this line if necessary
@@ -82,6 +82,7 @@ namespace RocketLaunchJournal.Entities
 
         public DbSet<APILog> APILogs { get; set; } = default!;
         public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; } = default!;
+        public DbSet<Key> Keys { get; set; } = default!;
         public DbSet<Launch> Launches { get; set; } = default!;
         public DbSet<LogType> LogTypes { get; set; } = default!;
         public DbSet<PersistedGrant> PersistedGrants { get; set; } = default!;
