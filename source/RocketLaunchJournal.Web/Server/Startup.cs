@@ -1,10 +1,8 @@
-using IdentityModel;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,9 +16,7 @@ using RocketLaunchJournal.Web.Shared.UserIdentity;
 using RocketLaunchJournal.Web.Shared.UserIdentity.Policies;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace RocketLaunchJournal.Web.Server
 {
@@ -57,12 +53,12 @@ namespace RocketLaunchJournal.Web.Server
 
             services.AddControllersWithViews().AddJsonOptions((options) =>
             {
-                options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
                 options.JsonSerializerOptions.Converters.Add(new TextJsonSerializer.DBNullConverter());
             });
             services.AddRazorPages().AddJsonOptions((options) =>
             {
-                options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
             });
 
             // middleware
@@ -130,13 +126,8 @@ namespace RocketLaunchJournal.Web.Server
             }).AddRoles<Role>().AddUserStore<Entities.UserIdentity.UserStore>().AddRoleStore<Entities.UserIdentity.RoleStore>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-#if RELEASE
-            var rsaCertificate = new X509Certificate2(Path.Combine(Configuration.GetValue<string>("CertPath"), "rsaCert.pfx"), Configuration.GetValue<string>("CertPassword"));
-#endif
+
             services.AddIdentityServer()
-#if RELEASE
-            .AddSigningCredential(rsaCertificate)
-#endif
             .AddApiAuthorization<User, DataContext>((options) =>
             {
                 options.ApiScopes = new ApiScopeCollection(IdentitySettings.GetApiScopes());

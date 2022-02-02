@@ -1,7 +1,7 @@
-﻿namespace RocketLaunchJournal.Web.Shared.Constants
+﻿namespace RocketLaunchJournal.Web.Shared.Constants;
+
+public static class Identity
 {
-    public static class Identity
-    {
-        public const string Scope = "RocketLaunchJournal.Web.ServerAPI";
-    }
+    public const string Scope = "RocketLaunchJournal.Web.ServerAPI";
 }
+
