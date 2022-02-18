@@ -26,7 +26,7 @@ else
       </tr>
     </thead>
     <tbody>
-      <SmartishTable.Repeater TItem="UserDto" Context="row">
+      <SmartishTable.Repeater Context="row">
         <tr>
           <td><button class="btn btn-sm btn-link" @onclick="@(() => AddEditAsync(row.Index))"><span class="fa fa-edit"></span> @row.Item.Email</button></td>
           <td>@row.Item.FirstName</td>

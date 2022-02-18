@@ -63,17 +63,17 @@ else
             <div class="card-header">
               <div class="row align-items-center">
                 <div class="col-12 col-sm-6">
-                  <SmartishTable.Sort TItem="ReportSourceColumnDto" Field="o => o.Name" IsDefaultSort="true" Css="canSelect">Columns (@sourceColumns?.Count)</SmartishTable.Sort>
+                  <SmartishTable.Sort Field="o => o.Name" IsDefaultSort="true" Css="canSelect">Columns (@sourceColumns?.Count)</SmartishTable.Sort>
                 </div>
                 <div class="col-12 col-sm-6">
-                  <SmartishTable.FilterString TItem="ReportSourceColumnDto" Field="x => x.Name" Context="filterContext">
+                  <SmartishTable.FilterString SmartishTItem="ReportSourceColumnDto" Field="x => x.Name" Context="filterContext">
                     <input type="text" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm mb-1" placeholder="Search..." />
                   </SmartishTable.FilterString>
                 </div>
               </div>
             </div>
             <div class="adhoc-column-lists">
-              <SmartishTable.Repeater TItem="ReportSourceColumnDto" Context="row">
+              <SmartishTable.Repeater Context="row">
                 <div class="row align-items-center hover adhoc-row p-2">
                   <div class="col">
                     <button type="button" class="btn btn-xs btn-outline-success" @onclick="(()=> AddColumn(row.Item, row.Index))"><span class="icon-x25">▶</span></button>
@@ -98,7 +98,7 @@ else
               </div>
             </div>
             <div class="adhoc-column-lists">
-              <SmartishTable.Repeater TItem="ReportSourceColumnDto" Context="row">
+              <SmartishTable.Repeater Context="row">
                 <div class="row align-items-center hover adhoc-row p-2">
                   <div class="col-12 col-sm-auto">
                     <div class="btn-group-vertical">

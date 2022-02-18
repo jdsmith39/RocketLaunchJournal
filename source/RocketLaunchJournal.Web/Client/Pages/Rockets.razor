@@ -20,12 +20,12 @@
       <SmartishTable.Root SafeList="list" @ref="rocketsTable">
         <div class="row gx-2 mb-2">
           <div class="col-6">
-            <SmartishTable.FilterString TItem="RocketDto" Field="x=>x.Name" Context="filterContext">
+            <SmartishTable.FilterString SmartishTItem="RocketDto" Field="x=>x.Name" Context="filterContext">
               <input type="text" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput"  name="Search" class="form-control form-control-sm mb-1" placeholder="Search Rockets..." />
             </SmartishTable.FilterString> 
           </div>
           <div class="col-6 text-end">
-            <SmartishTable.FilterBoolean TItem="RocketDto" Field="x=>x.IsActive" Operator="activeOnly">
+            <SmartishTable.FilterBoolean SmartishTItem="RocketDto" Field="x=>x.IsActive" Operator="activeOnly">
               <div class="form-check">
                 <label class="form-check-label">
                   <input type="checkbox" class="form-check-input" @onclick="@(() => ToggleActiveOnly())" />
@@ -36,7 +36,7 @@
           </div>
         </div>
         <div class="row gx-2 gy-2 rockets-cards">
-          <SmartishTable.Repeater TItem="RocketDto" Context="row">
+          <SmartishTable.Repeater Context="row">
             <RocketEditCard Dto="row.Item" AddEditAsync="AddEditRocketAsync" LoadLaunchesAsync="LoadLaunchesAsync" Index="row.Index"></RocketEditCard>
           </SmartishTable.Repeater>
         </div>

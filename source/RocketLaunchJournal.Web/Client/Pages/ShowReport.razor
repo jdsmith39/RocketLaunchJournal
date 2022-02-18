@@ -21,7 +21,7 @@
                             <tr>
                                 @foreach (var item in columns)
                             {
-                                <SmartishTable.Sort TItem="Dictionary<string, JsonElement>" Field="o=>o[item.ColumnName]" Css="canSelect" Comparer="jsonElementComparer">@item.ColumnName</SmartishTable.Sort>
+                                <SmartishTable.Sort Field="o=>o[item.ColumnName]" Css="canSelect" Comparer="jsonElementComparer">@item.ColumnName</SmartishTable.Sort>
                             }
                         </tr>
                         <tr>

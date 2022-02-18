@@ -4,183 +4,179 @@ using RocketLaunchJournal.Infrastructure.Dtos.Adhoc;
 using RocketLaunchJournal.Infrastructure.Dtos.Helpers;
 using RocketLaunchJournal.Infrastructure.Dtos.Users;
 using RocketLaunchJournal.Web.Client.Helpers;
-using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace RocketLaunchJournal.Web.Client.Services
+namespace RocketLaunchJournal.Web.Client.Services;
+
+public class AuthorizedClient
 {
-    public class AuthorizedClient
+    private readonly HttpClient _httpClient;
+    private readonly ServiceResponseHandler _serviceResponseHandler;
+
+    public AuthorizedClient(HttpClient httpClient, ServiceResponseHandler serviceResponseHandler)
     {
-        private readonly HttpClient _httpClient;
-        private readonly ServiceResponseHandler _serviceResponseHandler;
+        _httpClient = httpClient;
+        _serviceResponseHandler = serviceResponseHandler;
+    }
 
-        public AuthorizedClient(HttpClient httpClient, ServiceResponseHandler serviceResponseHandler)
+    public async Task<List<SelectOptionDto<int>>> GetRocketsForSelection()
+    {
+        try
         {
-            _httpClient = httpClient;
-            _serviceResponseHandler = serviceResponseHandler;
+            var response = await _httpClient.GetAsync("api/Rockets/ForSelection");
+            return await _serviceResponseHandler.HandleJsonResponse<List<RocketLaunchJournal.Infrastructure.Dtos.Helpers.SelectOptionDto<int>>>(response);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        return new List<SelectOptionDto<int>>();
+    }
+
+    public async Task<RocketDto?> SaveRocket(RocketDto dto)
+    {
+        try
+        {
+            Task<HttpResponseMessage>? saveTask;
+            var content = _serviceResponseHandler.BuildJsonContent(dto);
+            if (dto.RocketId == 0)
+                saveTask = _httpClient.PostAsync("api/Rockets", content);
+            else
+                saveTask = _httpClient.PutAsync("api/Rockets", content);
+
+            var response = await saveTask;
+            return await _serviceResponseHandler.HandleJsonResponse<RocketDto>(response);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        return null;
+    }
+
+    public async Task<LaunchDto?> SaveLaunch(LaunchDto dto)
+    {
+        try
+        {
+            Task<HttpResponseMessage>? saveTask;
+            var content = _serviceResponseHandler.BuildJsonContent(dto);
+            if (dto.LaunchId == 0)
+                saveTask = _httpClient.PostAsync("api/Launches", content);
+            else
+                saveTask = _httpClient.PutAsync("api/Launches", content);
+
+            var response = await saveTask;
+            return await _serviceResponseHandler.HandleJsonResponse<LaunchDto>(response);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
         }
 
-        public async Task<List<SelectOptionDto<int>>> GetRocketsForSelection()
+        return null;
+    }
+
+    public async Task<List<UserDto>> GetUsers()
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.GetAsync("api/Rockets/ForSelection");
-                return await _serviceResponseHandler.HandleJsonResponse<List<RocketLaunchJournal.Infrastructure.Dtos.Helpers.SelectOptionDto<int>>>(response);
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-            return new List<SelectOptionDto<int>>();
+            var response = await _httpClient.GetAsync("api/Users");
+            return await _serviceResponseHandler.HandleJsonResponse<List<RocketLaunchJournal.Infrastructure.Dtos.Users.UserDto>>(response);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
         }
 
-        public async Task<RocketDto?> SaveRocket(RocketDto dto)
-        {
-            try
-            {
-                Task<HttpResponseMessage>? saveTask;
-                var content = _serviceResponseHandler.BuildJsonContent(dto);
-                if (dto.RocketId == 0)
-                    saveTask = _httpClient.PostAsync("api/Rockets", content);
-                else
-                    saveTask = _httpClient.PutAsync("api/Rockets", content);
+        return new List<UserDto>();
+    }
 
-                var response = await saveTask;
-                return await _serviceResponseHandler.HandleJsonResponse<RocketDto>(response);
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-            return null;
+    public async Task<UserDto?> SaveUser(UserDto dto)
+    {
+        try
+        {
+            Task<HttpResponseMessage>? saveTask;
+            var content = _serviceResponseHandler.BuildJsonContent(dto);
+            if (dto.UserId == 0)
+                saveTask = _httpClient.PostAsync("api/Users", content);
+            else
+                saveTask = _httpClient.PutAsync("api/Users", content);
+
+            var response = await saveTask;
+            return await _serviceResponseHandler.HandleJsonResponse<UserDto>(response);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
         }
 
-        public async Task<LaunchDto?> SaveLaunch(LaunchDto dto)
+        return null;
+    }
+
+    public async Task<List<RoleDto>> GetRoles()
+    {
+        try
         {
-            try
-            {
-                Task<HttpResponseMessage>? saveTask;
-                var content = _serviceResponseHandler.BuildJsonContent(dto);
-                if (dto.LaunchId == 0)
-                    saveTask = _httpClient.PostAsync("api/Launches", content);
-                else
-                    saveTask = _httpClient.PutAsync("api/Launches", content);
+            var response = await _httpClient.GetAsync("api/Roles");
+            return await _serviceResponseHandler.HandleJsonResponse<List<RocketLaunchJournal.Infrastructure.Dtos.RoleDto>>(response);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
+        }
+        return new List<RoleDto>();
+    }
 
-                var response = await saveTask;
-                return await _serviceResponseHandler.HandleJsonResponse<LaunchDto>(response);
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-
-            return null;
+    public async Task<List<ReportDto>> GetReports()
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("api/Adhoc/Reports");
+            return await _serviceResponseHandler.HandleJsonResponse<List<ReportDto>>(response);
+        }
+        catch (AccessTokenNotAvailableException exception)
+        {
+            exception.Redirect();
         }
 
-        public async Task<List<UserDto>> GetUsers()
+        return new List<ReportDto>();
+    }
+
+    public async Task<ReportDto?> SaveReport(ReportDto dto)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.GetAsync("api/Users");
-                return await _serviceResponseHandler.HandleJsonResponse<List<RocketLaunchJournal.Infrastructure.Dtos.Users.UserDto>>(response);
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
+            Task<HttpResponseMessage>? saveTask;
+            var content = _serviceResponseHandler.BuildJsonContent(dto);
+            if (dto.ReportId == 0)
+                saveTask = _httpClient.PostAsync("api/Adhoc/Report", content);
+            else
+                saveTask = _httpClient.PutAsync("api/Adhoc/Report", content);
 
-            return new List<UserDto>();
+            var response = await saveTask;
+            return await _serviceResponseHandler.HandleJsonResponse<ReportDto>(response);
         }
-
-        public async Task<UserDto?> SaveUser(UserDto dto)
+        catch (AccessTokenNotAvailableException exception)
         {
-            try
-            {
-                Task<HttpResponseMessage>? saveTask;
-                var content = _serviceResponseHandler.BuildJsonContent(dto);
-                if (dto.UserId == 0)
-                    saveTask = _httpClient.PostAsync("api/Users", content);
-                else
-                    saveTask = _httpClient.PutAsync("api/Users", content);
-
-                var response = await saveTask;
-                return await _serviceResponseHandler.HandleJsonResponse<UserDto>(response);
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-
-            return null;
+            exception.Redirect();
         }
+        return null;
+    }
 
-        public async Task<List<RoleDto>> GetRoles()
+    public async Task<int?> DeleteReport(int id)
+    {
+        try
         {
-            try
-            {
-                var response = await _httpClient.GetAsync("api/Roles");
-                return await _serviceResponseHandler.HandleJsonResponse<List<RocketLaunchJournal.Infrastructure.Dtos.RoleDto>>(response);
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-            return new List<RoleDto>();
-        }
+            var response = await _httpClient.DeleteAsync($"api/Adhoc/Report/{id}");
 
-        public async Task<List<ReportDto>> GetReports()
+            return await _serviceResponseHandler.HandleJsonResponse<int?>(response);
+        }
+        catch (AccessTokenNotAvailableException exception)
         {
-            try
-            {
-                var response = await _httpClient.GetAsync("api/Adhoc/Reports");
-                return await _serviceResponseHandler.HandleJsonResponse<List<ReportDto>>(response);
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-
-            return new List<ReportDto>();
+            exception.Redirect();
         }
-
-        public async Task<ReportDto?> SaveReport(ReportDto dto)
-        {
-            try
-            {
-                Task<HttpResponseMessage>? saveTask;
-                var content = _serviceResponseHandler.BuildJsonContent(dto);
-                if (dto.ReportId == 0)
-                    saveTask = _httpClient.PostAsync("api/Adhoc/Report", content);
-                else
-                    saveTask = _httpClient.PutAsync("api/Adhoc/Report", content);
-
-                var response = await saveTask;
-                return await _serviceResponseHandler.HandleJsonResponse<ReportDto>(response);
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-            return null;
-        }
-
-        public async Task<int?> DeleteReport(int id)
-        {
-            try
-            {
-                var response = await _httpClient.DeleteAsync($"api/Adhoc/Report/{id}");
-
-                return await _serviceResponseHandler.HandleJsonResponse<int?>(response);
-            }
-            catch (AccessTokenNotAvailableException exception)
-            {
-                exception.Redirect();
-            }
-            return null;
-        }
+        return null;
     }
 }
