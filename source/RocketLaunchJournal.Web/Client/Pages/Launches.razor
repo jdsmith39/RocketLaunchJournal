@@ -37,7 +37,7 @@ else
               }
             </select>
             <SmartishTable.FilterString SmartishTItem="LaunchDto" Field="x=>x.Name" Context="filterContext" Operator="nameOperator">
-              <input type="text" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+              <input type="text" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterString>
           </td>
           <td>
@@ -48,7 +48,7 @@ else
               }
             </select>
             <SmartishTable.FilterNumeric SmartishTItem="LaunchDto" Field="x=>x.LaunchNumber" Context="filterContext" Operator="launchNumberOperator" FilterType="int?">
-              <input type="number" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+              <input type="number" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterNumeric>
           </td>
           <td>
@@ -58,9 +58,9 @@ else
                 <option value="@item">@item.GetDisplayName()</option>
               }
             </select>
-            <SmartishTable.FilterDateTime SmartishTItem="LaunchDto" Field="x=>x.Date" Context="filterContext" Operator="launchDateOperator">
-              <input type="date" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
-            </SmartishTable.FilterDateTime>
+            <SmartishTable.FilterDatesTimes SmartishTItem="LaunchDto" Field="x=>x.Date" Context="filterContext" Operator="launchDateOperator" FilterType="DateTime?">
+              <input type="date" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
+            </SmartishTable.FilterDatesTimes>
           </td>
           <td>
             <select @bind="motorsOperator" class="form-select form-select-sm">
@@ -70,7 +70,7 @@ else
               }
             </select>
             <SmartishTable.FilterString SmartishTItem="LaunchDto" Field="x=>x.Motors" Context="filterContext" Operator="motorsOperator">
-              <input type="text" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+              <input type="text" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterString>
           </td>
           <td>
@@ -81,7 +81,7 @@ else
               }
             </select>
             <SmartishTable.FilterNumeric SmartishTItem="LaunchDto" Field="x=>x.Altitude" Context="filterContext" Operator="altitudeOperator" FilterType="decimal?">
-              <input type="number" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+              <input type="number" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterNumeric>
           </td>
           <td>
@@ -92,13 +92,14 @@ else
               }
             </select>
             <SmartishTable.FilterNumeric SmartishTItem="LaunchDto" Field="x=>x.TopSpeed" Context="filterContext" Operator="topSpeedOperator" FilterType="decimal?">
-              <input type="number" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+              <input type="number" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterNumeric>
           </td>
         </tr>
       </thead>
       <tbody>
         <SmartishTable.Repeater Context="row">
+            <RowTemplate>
           <tr>
             <td>
               <button type="button" class="btn btn-sm btn-outline-info" @onclick="(() => row.Item.ShowDetails = !row.Item.ShowDetails)" aria-controls="filters">
@@ -162,6 +163,7 @@ else
               </td>
             </tr>
           }
+          </RowTemplate>
         </SmartishTable.Repeater>
       </tbody>
       <tfoot>

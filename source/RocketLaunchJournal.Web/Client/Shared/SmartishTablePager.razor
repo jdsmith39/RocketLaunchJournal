@@ -6,7 +6,7 @@
       </div>
       <div class="col-auto">
         <select class="form-select" @bind="Paginator.PageSize">
-          @foreach (var item in DCI.Web.Client.Common.Constants.PageSizes)
+          @foreach (var item in Constants.PageSizes)
           {
             <option selected=@(item == Paginator.PageSize) value="@(item)">@item</option>
           }

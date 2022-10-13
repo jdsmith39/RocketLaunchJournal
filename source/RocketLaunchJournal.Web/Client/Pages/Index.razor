@@ -17,7 +17,9 @@ else
   <SmartishTable.Root SafeList="list" @ref="launchTable">
     <div class="row gx-2 gy-2">
       <SmartishTable.Repeater Context="row">
-        <LaunchCard Dto="row.Item" AddEditAsync="AddEditLaunchAsync" Index="row.Index"></LaunchCard>
+        <RowTemplate>
+          <LaunchCard Dto="row.Item" AddEditAsync="AddEditLaunchAsync" Index="row.Index"></LaunchCard>
+        </RowTemplate>
       </SmartishTable.Repeater>
     </div>
   </SmartishTable.Root>
@@ -27,17 +29,17 @@ else
 @inject AnonymousClient anonymousClient
 @code {
 
-    private List<LaunchDto>? list;
+  private List<LaunchDto>? list;
 
-    private SmartishTable.Root<LaunchDto> launchTable;
+  private SmartishTable.Root<LaunchDto> launchTable;
 
-    protected async override Task OnInitializedAsync()
-    {
-      list = await anonymousClient.GetRecentLaunches();
-    }
+  protected async override Task OnInitializedAsync()
+  {
+    list = await anonymousClient.GetRecentLaunches();
+  }
 
-    protected async Task AddEditLaunchAsync(int index)
-    {
-      await AddEdit.AddEditLaunchAsync(ModalService, launchTable, index);
-    }
+  protected async Task AddEditLaunchAsync(int index)
+  {
+    await AddEdit.AddEditLaunchAsync(ModalService, launchTable, index);
+  }
 }

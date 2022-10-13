@@ -60,11 +60,6 @@ namespace RocketLaunchJournal.Web.Server
             {
                 options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
             });
-
-            // middleware
-            //services.AddTransient<Infrastructure.ActionFilters.DenyIfIpAddressChangedFilter>();
-            //services.AddTransient<Infrastructure.ActionFilters.IpWhiteListFilter>();
-            //services.AddTransient<Infrastructure.ActionFilters.LogRequestResponseFilter>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -162,15 +157,6 @@ namespace RocketLaunchJournal.Web.Server
             services.AddScoped<UserPermissionService>((s) =>
             {
                 var contextAccessor = s.GetService<IHttpContextAccessor>();
-                //string ipAddress = "N/A";
-
-                //if (contextAccessor.HttpContext != null)
-                //{
-                //    if (contextAccessor.HttpContext.Connection.RemoteIpAddress.IsIPv4MappedToIPv6)
-                //        ipAddress = contextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                //    else
-                //        ipAddress = contextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv6().ToString();
-                //}
                 var ups = new UserPermissionService();
                 ups.Setup(new UserClaimBuilder(contextAccessor!.HttpContext?.User));
                 return ups;
