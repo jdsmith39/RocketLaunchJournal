@@ -81,7 +81,7 @@
       @if (launches != null)
       {
         <SmartishTable.Root @ref="launchesTable" SafeList="launches">
-          <SmartishTable.Repeater TItem="LaunchDto" Context="row">
+          <SmartishTable.Repeater Context="row">
             <RowTemplate>
               <LaunchEditCard Dto="row.Item" AddEditAsync="AddEditLaunchAsync" Index="row.Index"></LaunchEditCard>
             </RowTemplate>
