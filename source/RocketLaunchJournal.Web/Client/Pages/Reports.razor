@@ -17,19 +17,19 @@ else
       <div class="col-sm-6">
         <EditSelect @bind-Value="Dto.ReportSourceId" PropertyInfo="PropertyReflections.GetPropertyByName(dtoProperties, nameof(Dto.ReportSourceId))" ValidationFor="(() => Dto.ReportSourceId)" @bind-OldValue="DtoOriginal.ReportSourceId">
           @foreach (var item in reportSources)
-        {
-          <option selected=@(Dto.ReportSourceId == item.ReportSourceId) value="@(item.ReportSourceId)">@item.Name</option>
-        }
-      </EditSelect>
+          {
+            <option selected=@(Dto.ReportSourceId == item.ReportSourceId) value="@(item.ReportSourceId)">@item.Name</option>
+          }
+        </EditSelect>
 
-      <div class="mb-3 row gx-2">
-        <label for="selectReport" class="col-form-label col-sm-3">
-          Select Report
-        </label>
-        <div class="col-sm">
-          <select @bind="SelectedReportId" id="selectReport" type="text" class="form-select">
-            <option value="0">Create New...</option>
-            @foreach (var item in GetReports())
+        <div class="mb-3 row gx-2">
+          <label for="selectReport" class="col-form-label col-sm-3">
+            Select Report
+          </label>
+          <div class="col-sm">
+            <select @bind="SelectedReportId" id="selectReport" type="text" class="form-select">
+              <option value="0">Create New...</option>
+              @foreach (var item in GetReports())
               {
                 <option selected=@(selectedReportId == item.ReportId) value="@(item.ReportId)">@item.Name - @item.UserName</option>
               }
@@ -51,7 +51,7 @@ else
               </div>
             </div>
           </Authorized>
-        </AuthorizeView> 
+        </AuthorizeView>
         <ValidationSummary />
       </div>
     </div>
@@ -63,23 +63,25 @@ else
             <div class="card-header">
               <div class="row align-items-center">
                 <div class="col-12 col-sm-6">
-                  <SmartishTable.Sort TItem="ReportSourceColumnDto" Field="o => o.Name" IsDefaultSort="true" Css="canSelect">Columns (@sourceColumns?.Count)</SmartishTable.Sort>
+                  <SmartishTable.Sort Field="o => o.Name" IsDefaultSort="true" Css="canSelect">Columns (@sourceColumns?.Count)</SmartishTable.Sort>
                 </div>
                 <div class="col-12 col-sm-6">
-                  <SmartishTable.FilterString TItem="ReportSourceColumnDto" Field="x => x.Name" Context="filterContext">
+                  <SmartishTable.FilterString SmartishTItem="ReportSourceColumnDto" Field="x => x.Name" Context="filterContext">
                     <input type="text" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm mb-1" placeholder="Search..." />
                   </SmartishTable.FilterString>
                 </div>
               </div>
             </div>
             <div class="adhoc-column-lists">
-              <SmartishTable.Repeater TItem="ReportSourceColumnDto" Context="row">
-                <div class="row align-items-center hover adhoc-row p-2">
-                  <div class="col">
-                    <button type="button" class="btn btn-xs btn-outline-success" @onclick="(()=> AddColumn(row.Item, row.Index))"><span class="icon-x25">▶</span></button>
-                    @row.Item.Name - @row.Item.TypeName
+              <SmartishTable.Repeater Context="row">
+                <RowTemplate>
+                  <div class="row align-items-center hover adhoc-row p-2">
+                    <div class="col">
+                      <button type="button" class="btn btn-xs btn-outline-success" @onclick="(()=> AddColumn(row.Item, row.Index))"><span class="icon-x25">▶</span></button>
+                      @row.Item.Name - @row.Item.TypeName
+                    </div>
                   </div>
-                </div>
+                </RowTemplate>
               </SmartishTable.Repeater>
             </div>
           </div>
@@ -98,106 +100,108 @@ else
               </div>
             </div>
             <div class="adhoc-column-lists">
-              <SmartishTable.Repeater TItem="ReportSourceColumnDto" Context="row">
-                <div class="row align-items-center hover adhoc-row p-2">
-                  <div class="col-12 col-sm-auto">
-                    <div class="btn-group-vertical">
-                      @if (row.Index > 0)
-                    {
-                      <button class="btn btn-xs btn-outline-secondary" type="button" @onclick="(() => MoveUp(row.Item, row.Index))"><span class="icon-x25">▲</span></button>
-                    }
-                    <button class="btn btn-xs btn-outline-danger" type="button" @onclick="(()=> RemoveColumn(row.Item, row.Index))"><span class="icon-x25">◀</span></button>
-                    @if (row.Index < SelectedTable?.SafeList.Count - 1)
-                    {
-                      <button class="btn btn-xs btn-outline-secondary" type="button" @onclick="(() => MoveDown(row.Item, row.Index))"><span class="icon-x25">▼</span></button>
-                    }
-                  </div>
-                </div>
-                <div class="col-12 col-sm-3">
-                  <div class="form-control-plaintext">@row.Item.Name <br />Type: &nbsp; @row.Item.TypeName</div>
-                </div>
-                <div class="col">
-                  <div class="row g-2 row-cols-sm-auto align-items-center justify-content-between">
-                    <div class="col-12">
-                      <div class="form-check me-sm-2">
-                        <InputCheckbox @bind-Value="row.Item.InOutput" class="form-check-input" id="@string.Format(outputIdFormat, row.Index)" />
-                        <label class="form-check-label me-sm-2" for="@string.Format(outputIdFormat, row.Index)">Output</label>
+              <SmartishTable.Repeater Context="row">
+                <RowTemplate>
+                  <div class="row align-items-center hover adhoc-row p-2">
+                    <div class="col-12 col-sm-auto">
+                      <div class="btn-group-vertical">
+                        @if (row.Index > 0)
+                        {
+                          <button class="btn btn-xs btn-outline-secondary" type="button" @onclick="(() => MoveUp(row.Item, row.Index))"><span class="icon-x25">▲</span></button>
+                        }
+                        <button class="btn btn-xs btn-outline-danger" type="button" @onclick="(()=> RemoveColumn(row.Item, row.Index))"><span class="icon-x25">◀</span></button>
+                        @if (row.Index < SelectedTable?.SafeList.Count - 1)
+                        {
+                          <button class="btn btn-xs btn-outline-secondary" type="button" @onclick="(() => MoveDown(row.Item, row.Index))"><span class="icon-x25">▼</span></button>
+                        }
                       </div>
                     </div>
-
-                    <div class="col-12">
-                      <label for="@string.Format(sortIdFormat, row.Index)" class="me-sm-2">
-                        Sort
-                      </label>
-                      <InputSelect ValueExpression="@(() => row.Item.Sort)" Value="@row.Item.Sort" ValueChanged="@((SortTypes? value) => SortChanged(row.Item, value))"
-                                   class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(sortIdFormat, row.Index)">
-                        <option value="">None</option>
-                        @foreach (var item in sortTypes)
-                        {
-                          <option selected=@(row.Item.Sort == item) value="@item">@item.GetDisplayName()</option>
-                        }
-                      </InputSelect>
+                    <div class="col-12 col-sm-3">
+                      <div class="form-control-plaintext">@row.Item.Name <br />Type: &nbsp; @row.Item.TypeName</div>
                     </div>
+                    <div class="col">
+                      <div class="row g-2 row-cols-sm-auto align-items-center justify-content-between">
+                        <div class="col-12">
+                          <div class="form-check me-sm-2">
+                            <InputCheckbox @bind-Value="row.Item.InOutput" class="form-check-input" id="@string.Format(outputIdFormat, row.Index)" />
+                            <label class="form-check-label me-sm-2" for="@string.Format(outputIdFormat, row.Index)">Output</label>
+                          </div>
+                        </div>
 
-                    <div class="col-12">
-                      <label for="@string.Format(sortOrderIdFormat, row.Index)" class="me-sm-2">
-                        Sort Order
-                      </label>
-                      <InputSelect ValueExpression="@(() => row.Item.SortOrder)" Value="@row.Item.SortOrder" ValueChanged="@((int? value) => SortOrderChanged(row.Item, value))"
-                                   class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(sortOrderIdFormat, row.Index)">
-                        <option value="">None</option>
-                        @foreach (var item in sortOrders)
-                        {
-                          <option selected=@(row.Item.SortOrder == item) value="@item">@item</option>
-                        }
-                      </InputSelect>
-                    </div>
+                        <div class="col-12">
+                          <label for="@string.Format(sortIdFormat, row.Index)" class="me-sm-2">
+                            Sort
+                          </label>
+                          <InputSelect ValueExpression="@(() => row.Item.Sort)" Value="@row.Item.Sort" ValueChanged="@((SortTypes? value) => SortChanged(row.Item, value))"
+                                     class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(sortIdFormat, row.Index)">
+                            <option value="">None</option>
+                            @foreach (var item in sortTypes)
+                            {
+                              <option selected=@(row.Item.Sort == item) value="@item">@item.GetDisplayName()</option>
+                            }
+                          </InputSelect>
+                        </div>
 
-                    <div class="col-12">
-                      <label for="@string.Format(aggregateIdFormat, row.Index)" class="me-sm-2">
-                        Aggregate
-                      </label>
-                      <InputSelect @bind-Value="row.Item.Aggregate" class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(aggregateIdFormat, row.Index)">
-                        @{
-                          var aggregates = numberAggregates;
-                          if (row.Item.TypeName == "String" || row.Item.TypeName == "Boolean")
-                            aggregates = otherAggregates;
-                          else if (row.Item.TypeName == "DateTime")
-                            aggregates = dateAggregates;
-                        }
-                        @foreach (var item in aggregates)
-                        {
-                          <option selected=@(row.Item.Aggregate == item) value="@item">@item.GetDisplayName()</option>
-                        }
-                      </InputSelect>
+                        <div class="col-12">
+                          <label for="@string.Format(sortOrderIdFormat, row.Index)" class="me-sm-2">
+                            Sort Order
+                          </label>
+                          <InputSelect ValueExpression="@(() => row.Item.SortOrder)" Value="@row.Item.SortOrder" ValueChanged="@((int? value) => SortOrderChanged(row.Item, value))"
+                                     class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(sortOrderIdFormat, row.Index)">
+                            <option value="">None</option>
+                            @foreach (var item in sortOrders)
+                            {
+                              <option selected=@(row.Item.SortOrder == item) value="@item">@item</option>
+                            }
+                          </InputSelect>
+                        </div>
+
+                        <div class="col-12">
+                          <label for="@string.Format(aggregateIdFormat, row.Index)" class="me-sm-2">
+                            Aggregate
+                          </label>
+                          <InputSelect @bind-Value="row.Item.Aggregate" class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(aggregateIdFormat, row.Index)">
+                            @{
+                              var aggregates = numberAggregates;
+                              if (row.Item.TypeName == "String" || row.Item.TypeName == "Boolean")
+                                aggregates = otherAggregates;
+                              else if (row.Item.TypeName == "DateTime")
+                                aggregates = dateAggregates;
+                            }
+                            @foreach (var item in aggregates)
+                            {
+                              <option selected=@(row.Item.Aggregate == item) value="@item">@item.GetDisplayName()</option>
+                            }
+                          </InputSelect>
+                        </div>
+                      </div>
+                      <div class="row gx-2">
+                        <div class="col-auto">Filters coming soon...</div>
+                      </div>
                     </div>
                   </div>
-                  <div class="row gx-2">
-                    <div class="col-auto">Filters coming soon...</div>
-                  </div>
-                </div>
-              </div>
-            </SmartishTable.Repeater>
+                </RowTemplate>
+              </SmartishTable.Repeater>
+            </div>
           </div>
-        </div>
-      </SmartishTable.Root>
+        </SmartishTable.Root>
+      </div>
     </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-6">
-      <EditText @bind-Value="Dto.Name" PropertyInfo="PropertyReflections.GetPropertyByName(dtoProperties, nameof(Dto.Name))" ValidationFor="(() => Dto.Name)" @bind-OldValue="DtoOriginal.Name" />
-      <EditCheckbox @bind-Value="Dto.IsShared" PropertyInfo="PropertyReflections.GetPropertyByName(dtoProperties, nameof(Dto.IsShared))" @bind-OldValue="DtoOriginal.IsShared" />
+    <div class="row">
+      <div class="col-sm-6">
+        <EditText @bind-Value="Dto.Name" PropertyInfo="PropertyReflections.GetPropertyByName(dtoProperties, nameof(Dto.Name))" ValidationFor="(() => Dto.Name)" @bind-OldValue="DtoOriginal.Name" />
+        <EditCheckbox @bind-Value="Dto.IsShared" PropertyInfo="PropertyReflections.GetPropertyByName(dtoProperties, nameof(Dto.IsShared))" @bind-OldValue="DtoOriginal.IsShared" />
+      </div>
+      <div class="col-sm-6 text-sm-right">
+        <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.ReportAddEditDelete">
+          <Authorized Context="authorizedContext">
+            <button type="submit" class="btn btn-primary btn-sm me-2" @onclick="(() => Save() )"><span class="icon-x25">🖫</span> Save</button>
+            <button type="submit" class="btn btn-outline-primary btn-sm me-2" @onclick="(() =>SaveAs() )"><span class="icon-x25">🖫</span> Save As</button>
+            <button type="button" class="btn btn-danger btn-sm" @onclick="(() =>Delete() )"><span class="icon-x25">✖</span> Delete</button>
+          </Authorized>
+        </AuthorizeView>
+        <ValidationSummary />
+      </div>
     </div>
-    <div class="col-sm-6 text-sm-right">
-      <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.ReportAddEditDelete">
-        <Authorized Context="authorizedContext">
-          <button type="submit" class="btn btn-primary btn-sm me-2" @onclick="(() => Save() )"><span class="icon-x25">🖫</span> Save</button>
-          <button type="submit" class="btn btn-outline-primary btn-sm me-2" @onclick="(() =>SaveAs() )"><span class="icon-x25">🖫</span> Save As</button>
-          <button type="button" class="btn btn-danger btn-sm" @onclick="(() =>Delete() )"><span class="icon-x25">✖</span> Delete</button>
-        </Authorized>
-      </AuthorizeView>
-      <ValidationSummary />
-    </div>
-  </div>
-</EditForm>
+  </EditForm>
 }

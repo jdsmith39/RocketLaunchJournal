@@ -6,7 +6,7 @@
       <div class="modal-header">
         <div class="col"><h5 class="modal-title">@BlazoredModal.Title</h5></div>
         <div class="col"><UnsavedChangesNotifcation Value="dataUpdated" /></div>
-        <button type="button" class="btn-close" aria-label="Close" @onclick="BlazoredModal.CancelAsync">
+        <button type="button" class="btn-close" aria-label="Close" @onclick="(async () => await BlazoredModal.CancelAsync())">
         </button>
       </div>
       <EditForm EditContext="_editContext" OnValidSubmit="Save">

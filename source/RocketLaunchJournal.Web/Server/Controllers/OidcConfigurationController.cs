@@ -2,25 +2,24 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace RocketLaunchJournal.Web.Server.Controllers
+namespace RocketLaunchJournal.Web.Server.Controllers;
+
+public class OidcConfigurationController : BaseController
 {
-    public class OidcConfigurationController : BaseController
+    private readonly ILogger<OidcConfigurationController> _logger;
+
+    public OidcConfigurationController(IClientRequestParametersProvider clientRequestParametersProvider, ILogger<OidcConfigurationController> logger)
     {
-        private readonly ILogger<OidcConfigurationController> _logger;
+        ClientRequestParametersProvider = clientRequestParametersProvider;
+        _logger = logger;
+    }
 
-        public OidcConfigurationController(IClientRequestParametersProvider clientRequestParametersProvider, ILogger<OidcConfigurationController> logger)
-        {
-            ClientRequestParametersProvider = clientRequestParametersProvider;
-            _logger = logger;
-        }
+    public IClientRequestParametersProvider ClientRequestParametersProvider { get; }
 
-        public IClientRequestParametersProvider ClientRequestParametersProvider { get; }
-
-        [HttpGet("_configuration/{clientId}")]
-        public IActionResult GetClientRequestParameters([FromRoute] string clientId)
-        {
-            var parameters = ClientRequestParametersProvider.GetClientParameters(HttpContext, clientId);
-            return Ok(parameters);
-        }
+    [HttpGet("_configuration/{clientId}")]
+    public IActionResult GetClientRequestParameters([FromRoute] string clientId)
+    {
+        var parameters = ClientRequestParametersProvider.GetClientParameters(HttpContext, clientId);
+        return Ok(parameters);
     }
 }

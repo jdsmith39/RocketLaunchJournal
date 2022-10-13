@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.JSInterop;
 using RocketLaunchJournal.Web.Client.Helpers;
 using RocketLaunchJournal.Web.Client.Services;
 using RocketLaunchJournal.Web.Shared.UserIdentity.Policies;

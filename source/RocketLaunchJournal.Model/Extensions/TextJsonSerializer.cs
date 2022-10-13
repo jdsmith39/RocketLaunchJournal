@@ -29,7 +29,7 @@ public static class TextJsonSerializer
 
     private static JsonSerializerOptions defaultOptions => new JsonSerializerOptions() 
     {
-        IgnoreNullValues = true,
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
     };
 
     public class DBNullConverter : System.Text.Json.Serialization.JsonConverter<DBNull>

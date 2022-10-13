@@ -213,7 +213,7 @@ app {
 }
 
 /************ smartish table pager ********/
-.pageWidth-form-control {
+.paging-input-width-form-control {
     width: 80px;
 }
 

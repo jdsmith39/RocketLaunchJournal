@@ -8,54 +8,53 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace RocketLaunchJournal.Web.Server.Infrastructure.ActionFilters
+namespace RocketLaunchJournal.Web.Server.Infrastructure.ActionFilters;
+
+/// <summary>
+/// Action Filter that does Ip white list restricting
+/// Requires "IPAddressRange" Nuget package
+/// </summary>
+public class IpWhiteListFilter : ActionFilterAttribute
 {
+    private readonly IpWhiteListSettings _ipWhiteListSettings;
+
     /// <summary>
-    /// Action Filter that does Ip white list restricting
-    /// Requires "IPAddressRange" Nuget package
+    /// constructor
     /// </summary>
-    public class IpWhiteListFilter : ActionFilterAttribute
+    /// <param name="ipWhiteListSettings"></param>
+    public IpWhiteListFilter(IOptions<IpWhiteListSettings> ipWhiteListSettings)
     {
-        private readonly IpWhiteListSettings _ipWhiteListSettings;
+        _ipWhiteListSettings = ipWhiteListSettings.Value;
+    }
 
-        /// <summary>
-        /// constructor
-        /// </summary>
-        /// <param name="ipWhiteListSettings"></param>
-        public IpWhiteListFilter(IOptions<IpWhiteListSettings> ipWhiteListSettings)
+    /// <summary>
+    /// ip white list restricting
+    /// </summary>
+    /// <param name="context"></param>
+    /// <param name="next"></param>
+    /// <returns></returns>
+    public async override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+    {
+        // uncomment below line and add "IPAddressRange" Nuget package
+        var found = false;
+        foreach (var item in _ipWhiteListSettings.IpList.SelectMany(s=>s.Values))
         {
-            _ipWhiteListSettings = ipWhiteListSettings.Value;
+            //if (IPAddressRange.Parse(item).Contains(context.HttpContext.Connection.RemoteIpAddress))
+            {
+                found = true;
+                break;
+            }
         }
 
-        /// <summary>
-        /// ip white list restricting
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="next"></param>
-        /// <returns></returns>
-        public async override Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
+        if (!found)
         {
-            // uncomment below line and add "IPAddressRange" Nuget package
-            var found = false;
-            foreach (var item in _ipWhiteListSettings.IpList.SelectMany(s=>s.Values))
+            context.Result = new Microsoft.AspNetCore.Mvc.ContentResult()
             {
-                //if (IPAddressRange.Parse(item).Contains(context.HttpContext.Connection.RemoteIpAddress))
-                {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (!found)
-            {
-                context.Result = new Microsoft.AspNetCore.Mvc.ContentResult()
-                {
-                    StatusCode = (int)HttpStatusCode.Forbidden,
-                    Content = "Access Denied"
-                };
-            }
-
-            await base.OnActionExecutionAsync(context, next);
+                StatusCode = (int)HttpStatusCode.Forbidden,
+                Content = "Access Denied"
+            };
         }
+
+        await base.OnActionExecutionAsync(context, next);
     }
 }

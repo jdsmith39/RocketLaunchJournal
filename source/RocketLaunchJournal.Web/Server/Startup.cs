@@ -1,10 +1,8 @@
-using IdentityModel;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,9 +16,7 @@ using RocketLaunchJournal.Web.Shared.UserIdentity;
 using RocketLaunchJournal.Web.Shared.UserIdentity.Policies;
 using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.IO;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 
 namespace RocketLaunchJournal.Web.Server
 {
@@ -57,21 +53,13 @@ namespace RocketLaunchJournal.Web.Server
 
             services.AddControllersWithViews().AddJsonOptions((options) =>
             {
-                options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
                 options.JsonSerializerOptions.Converters.Add(new TextJsonSerializer.DBNullConverter());
             });
             services.AddRazorPages().AddJsonOptions((options) =>
             {
-                options.JsonSerializerOptions.IgnoreNullValues = true;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
             });
-
-            // middleware
-            //services.AddTransient<Infrastructure.ActionFilters.DenyIfIpAddressChangedFilter>();
-            //services.AddTransient<Infrastructure.ActionFilters.IpWhiteListFilter>();
-            //services.AddTransient<Infrastructure.ActionFilters.LogRequestResponseFilter>();
-
-            // httpclient factories *************************************
-            //services.AddHttpClient<ReCAPTCHAClient>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -133,13 +121,8 @@ namespace RocketLaunchJournal.Web.Server
             }).AddRoles<Role>().AddUserStore<Entities.UserIdentity.UserStore>().AddRoleStore<Entities.UserIdentity.RoleStore>();
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-#if RELEASE
-            var rsaCertificate = new X509Certificate2(Path.Combine(Configuration.GetValue<string>("CertPath"), "rsaCert.pfx"), Configuration.GetValue<string>("CertPassword"));
-#endif
+
             services.AddIdentityServer()
-#if RELEASE
-            .AddSigningCredential(rsaCertificate)
-#endif
             .AddApiAuthorization<User, DataContext>((options) =>
             {
                 options.ApiScopes = new ApiScopeCollection(IdentitySettings.GetApiScopes());
@@ -174,15 +157,6 @@ namespace RocketLaunchJournal.Web.Server
             services.AddScoped<UserPermissionService>((s) =>
             {
                 var contextAccessor = s.GetService<IHttpContextAccessor>();
-                //string ipAddress = "N/A";
-
-                //if (contextAccessor.HttpContext != null)
-                //{
-                //    if (contextAccessor.HttpContext.Connection.RemoteIpAddress.IsIPv4MappedToIPv6)
-                //        ipAddress = contextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
-                //    else
-                //        ipAddress = contextAccessor.HttpContext.Connection.RemoteIpAddress.MapToIPv6().ToString();
-                //}
                 var ups = new UserPermissionService();
                 ups.Setup(new UserClaimBuilder(contextAccessor!.HttpContext?.User));
                 return ups;
@@ -191,8 +165,6 @@ namespace RocketLaunchJournal.Web.Server
             var dbConnection = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<DataContext>(options => options.UseSqlServer(dbConnection));
             services.AddDbContext<ILoggingContext, DataContext>(options => options.UseSqlServer(dbConnection));
-
-            //services.Configure<ReCAPTCHASettings>(Configuration.GetSection(nameof(ReCAPTCHASettings)));
 
             services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Templates.Emails.EmailsCreate>();
             services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Launches.LaunchesCreateUpdate>();

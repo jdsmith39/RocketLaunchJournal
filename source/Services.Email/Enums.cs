@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿namespace Services.Email;
 
-namespace Services.Email
+/// <summary>
+/// Type of email body
+/// </summary>
+public enum BodyType
 {
-    /// <summary>
-    /// Type of email body
-    /// </summary>
-    public enum BodyType
-    {
-        HTML = 1,
-        PlainText = 2,
-    }
+    HTML = 1,
+    PlainText = 2,
 }

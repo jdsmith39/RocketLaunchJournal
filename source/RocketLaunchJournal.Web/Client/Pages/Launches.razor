@@ -21,12 +21,12 @@ else
     <table class="table table-condensed table-striped">
       <thead>
         <tr>
-          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.Name" IsDefaultSort="true" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Name))</SmartishTable.Sort>
-          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.LaunchNumber" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.LaunchNumber))</SmartishTable.Sort>
-          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.Date" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Date))</SmartishTable.Sort>
-          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.Motors" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Motors))</SmartishTable.Sort>
-          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.Altitude" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Altitude))</SmartishTable.Sort>
-          <SmartishTable.Sort TItem="LaunchDto" Field="o=>o.TopSpeed" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.TopSpeed))</SmartishTable.Sort>
+          <SmartishTable.Sort Field="o=>o.Name" IsDefaultSort="true" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Name))</SmartishTable.Sort>
+          <SmartishTable.Sort Field="o=>o.LaunchNumber" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.LaunchNumber))</SmartishTable.Sort>
+          <SmartishTable.Sort Field="o=>o.Date" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Date))</SmartishTable.Sort>
+          <SmartishTable.Sort Field="o=>o.Motors" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Motors))</SmartishTable.Sort>
+          <SmartishTable.Sort Field="o=>o.Altitude" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.Altitude))</SmartishTable.Sort>
+          <SmartishTable.Sort Field="o=>o.TopSpeed" Css="canSelect">@PropertyReflections.GetLabelName(dtoProperties, nameof(LaunchDto.TopSpeed))</SmartishTable.Sort>
         </tr>
         <tr>
           <td>
@@ -36,8 +36,8 @@ else
                 <option value="@item">@item.GetDisplayName()</option>
               }
             </select>
-            <SmartishTable.FilterString TItem="LaunchDto" Field="x=>x.Name" Context="filterContext" Operator="nameOperator">
-              <input type="text" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            <SmartishTable.FilterString SmartishTItem="LaunchDto" Field="x=>x.Name" Context="filterContext" Operator="nameOperator">
+              <input type="text" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterString>
           </td>
           <td>
@@ -47,8 +47,8 @@ else
                 <option value="@item">@item.GetDisplayName()</option>
               }
             </select>
-            <SmartishTable.FilterNumeric TItem="LaunchDto" Field="x=>x.LaunchNumber" Context="filterContext" Operator="launchNumberOperator" FilterType="int?">
-              <input type="number" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            <SmartishTable.FilterNumeric SmartishTItem="LaunchDto" Field="x=>x.LaunchNumber" Context="filterContext" Operator="launchNumberOperator" FilterType="int?">
+              <input type="number" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterNumeric>
           </td>
           <td>
@@ -58,9 +58,9 @@ else
                 <option value="@item">@item.GetDisplayName()</option>
               }
             </select>
-            <SmartishTable.FilterDateTime TItem="LaunchDto" Field="x=>x.Date" Context="filterContext" Operator="launchDateOperator">
-              <input type="date" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
-            </SmartishTable.FilterDateTime>
+            <SmartishTable.FilterDatesTimes SmartishTItem="LaunchDto" Field="x=>x.Date" Context="filterContext" Operator="launchDateOperator" FilterType="DateTime?">
+              <input type="date" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
+            </SmartishTable.FilterDatesTimes>
           </td>
           <td>
             <select @bind="motorsOperator" class="form-select form-select-sm">
@@ -69,8 +69,8 @@ else
                 <option value="@item">@item.GetDisplayName()</option>
               }
             </select>
-            <SmartishTable.FilterString TItem="LaunchDto" Field="x=>x.Motors" Context="filterContext" Operator="motorsOperator">
-              <input type="text" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            <SmartishTable.FilterString SmartishTItem="LaunchDto" Field="x=>x.Motors" Context="filterContext" Operator="motorsOperator">
+              <input type="text" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterString>
           </td>
           <td>
@@ -80,8 +80,8 @@ else
                 <option value="@item">@item.GetDisplayName()</option>
               }
             </select>
-            <SmartishTable.FilterNumeric TItem="LaunchDto" Field="x=>x.Altitude" Context="filterContext" Operator="altitudeOperator" FilterType="decimal?">
-              <input type="number" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            <SmartishTable.FilterNumeric SmartishTItem="LaunchDto" Field="x=>x.Altitude" Context="filterContext" Operator="altitudeOperator" FilterType="decimal?">
+              <input type="number" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterNumeric>
           </td>
           <td>
@@ -91,14 +91,15 @@ else
                 <option value="@item">@item.GetDisplayName()</option>
               }
             </select>
-            <SmartishTable.FilterNumeric TItem="LaunchDto" Field="x=>x.TopSpeed" Context="filterContext" Operator="topSpeedOperator" FilterType="decimal?">
-              <input type="number" @bind-value="@filterContext.FilterValue" name="Search" class="form-control form-control-sm" />
+            <SmartishTable.FilterNumeric SmartishTItem="LaunchDto" Field="x=>x.TopSpeed" Context="filterContext" Operator="topSpeedOperator" FilterType="decimal?">
+              <input type="number" @bind-value="@filterContext.FilterValue" @bind-value:event="oninput" name="Search" class="form-control form-control-sm" />
             </SmartishTable.FilterNumeric>
           </td>
         </tr>
       </thead>
       <tbody>
-        <SmartishTable.Repeater TItem="LaunchDto" Context="row">
+        <SmartishTable.Repeater Context="row">
+            <RowTemplate>
           <tr>
             <td>
               <button type="button" class="btn btn-sm btn-outline-info" @onclick="(() => row.Item.ShowDetails = !row.Item.ShowDetails)" aria-controls="filters">
@@ -162,6 +163,7 @@ else
               </td>
             </tr>
           }
+          </RowTemplate>
         </SmartishTable.Repeater>
       </tbody>
       <tfoot>
