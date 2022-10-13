@@ -28,7 +28,6 @@
                   @foreach (var item in columns)
                   {
                     <td>
-
                       @switch (item.TypeName.ToLower())
                       {
                         case "datetime":
@@ -84,7 +83,7 @@
                 </tr>
               </thead>
               <tbody>
-                <SmartishTable.Repeater TItem="Dictionary<string, JsonElement>" Context="row">
+                <SmartishTable.Repeater Context="row">
                   <RowTemplate>
                     <tr>
                       @foreach (var item in columns)
@@ -112,6 +111,11 @@
                       }
                     </tr>
                   </RowTemplate>
+                  <EmptyTemplate>
+                      <tr>
+                      <td colspan="@columns.Count">No Data</td>
+                      </tr>
+                  </EmptyTemplate>
                 </SmartishTable.Repeater>
               </tbody>
               <tfoot>
