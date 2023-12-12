@@ -1,0 +1,122 @@
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using RocketLaunchJournal.Entities;
+using RocketLaunchJournal.Infrastructure.Services.Users;
+using RocketLaunchJournal.Infrastructure.UserIdentity;
+using RocketLaunchJournal.Model.UserIdentity;
+using RocketLaunchJournal.Web.Components;
+using RocketLaunchJournal.Web.Components.Account;
+using RocketLaunchJournal.Web.Shared.UserIdentity;
+using RocketLaunchJournal.Web.Shared.UserIdentity.Policies;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents()
+    .AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddAuthentication(options =>
+    {
+      options.DefaultScheme = IdentityConstants.ApplicationScheme;
+      options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+    })
+    .AddIdentityCookies();
+
+builder.Services.AddIdentityCore<User>(options =>
+{
+  options.Lockout.AllowedForNewUsers = true;
+  options.Lockout.DefaultLockoutTimeSpan = new TimeSpan(0, 10, 0);
+  options.Lockout.MaxFailedAccessAttempts = 3;
+
+  options.Password.RequireDigit = false;
+  options.Password.RequiredLength = RocketLaunchJournal.Model.Constants.FieldSizes.PasswordMinimumLength;
+  options.Password.RequiredUniqueChars = 0;
+  options.Password.RequireLowercase = true;
+  options.Password.RequireNonAlphanumeric = false;
+  options.Password.RequireUppercase = true;
+
+  options.User.RequireUniqueEmail = true;
+
+  options.SignIn.RequireConfirmedEmail = true;
+}).AddRoles<Role>().AddUserStore<RocketLaunchJournal.Entities.UserIdentity.UserStore>().AddRoleStore<RocketLaunchJournal.Entities.UserIdentity.RoleStore>()
+.AddSignInManager().AddDefaultTokenProviders();
+
+builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddAuthorization(config =>
+{
+  config.AddPolicy(PolicyNames.CanImpersonate, policy => policy.Requirements.Add(new CanImpersonate()));
+  config.AddPolicy(PolicyNames.LaunchAddEditDelete, policy => policy.Requirements.Add(new LaunchAddEditDelete()));
+  config.AddPolicy(PolicyNames.ReportAddEditDelete, policy => policy.Requirements.Add(new ReportAddEditDelete()));
+  config.AddPolicy(PolicyNames.RocketAddEditDelete, policy => policy.Requirements.Add(new RocketAddEditDelete()));
+  config.AddPolicy(PolicyNames.UserAddEditDelete, policy => policy.Requirements.Add(new UserAddEditDelete()));
+  config.AddPolicy(PolicyNames.UserProfileEdit, policy => policy.Requirements.Add(new UserProfileEdit()));
+});
+
+//builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
+
+builder.Services.Configure<Services.Email.MailSettings>(builder.Configuration.GetSection(nameof(Services.Email.MailSettings)));
+builder.Services.AddTransient<Services.Email.IEmailer, Services.Email.Emailer>();
+
+builder.Services.AddScoped<UserPermissionService>((s) =>
+{
+  var contextAccessor = s.GetService<IHttpContextAccessor>();
+  var ups = new UserPermissionService();
+  ups.Setup(new UserClaimBuilder(contextAccessor!.HttpContext?.User));
+  return ups;
+});
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+builder.Services.AddDbContext<DataContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<ILoggingContext, DataContext>(options => options.UseSqlServer(connectionString));
+
+builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Templates.Emails.EmailsCreate>();
+builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Launches.LaunchesCreateUpdate>();
+builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Launches.LaunchesGet>();
+builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Logs.APILogsCreateUpdate>();
+builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Logs.SystemLogsCreate>();
+builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Rockets.RocketsCreateUpdate>();
+builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Rockets.RocketsGet>();
+builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Adhoc.AdhocCreateUpdate>();
+builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Adhoc.AdhocGet>();
+builder.Services.AddTransient<UsersCreateUpdate>();
+builder.Services.AddTransient<UsersGet>();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+  app.UseWebAssemblyDebugging();
+  app.UseMigrationsEndPoint();
+}
+else
+{
+  app.UseExceptionHandler("/Error", createScopeForErrors: true);
+  // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+  app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode()
+    .AddInteractiveWebAssemblyRenderMode()
+    .AddAdditionalAssemblies(typeof(RocketLaunchJournal.Web.Client.Pages.Index).Assembly);
+
+app.MapControllers();
+
+// Add additional endpoints required by the Identity /Account Razor components.
+app.MapAdditionalIdentityEndpoints();
+
+app.Run();

@@ -1,0 +1,10 @@
+﻿@using Blazored.Toast.Configuration
+@inherits LayoutComponentBase
+
+<NavMenu />
+
+<div class="container-fluid body-content">
+  @Body
+</div>
+
+<BlazoredToasts Position="Blazored.Toast.Configuration.ToastPosition.TopRight" ShowProgressBar="true" IconType="IconType.FontAwesome" />
