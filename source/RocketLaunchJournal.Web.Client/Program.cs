@@ -1,7 +1,6 @@
 using Blazored.Modal;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using RocketLaunchJournal.Web.Client.Helpers;
 using RocketLaunchJournal.Web.Client.Services;
@@ -14,18 +13,11 @@ public class Program
   public static async Task Main(string[] args)
   {
     var builder = WebAssemblyHostBuilder.CreateDefault(args);
-    builder.RootComponents.Add<App>("app");
 
-    builder.Services.AddHttpClient("RocketLaunchJournal.Web.ServerAPI.Anonymous", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
-    builder.Services.AddHttpClient(RocketLaunchJournal.Web.Shared.Constants.Identity.Scope, client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
-        .AddHttpMessageHandler<BaseAddressAuthorizationMessageHandler>();
+    builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-    // Supply HttpClient instances that include access tokens when making requests to the server project
-    builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("RocketLaunchJournal.Web.ServerAPI.Anonymous"));
-    builder.Services.AddTransient(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient(RocketLaunchJournal.Web.Shared.Constants.Identity.Scope));
-
-    builder.Services.AddTransient<AnonymousClient>((sp) => new AnonymousClient(sp.GetRequiredService<IHttpClientFactory>().CreateClient("RocketLaunchJournal.Web.ServerAPI.Anonymous"), sp.GetRequiredService<ServiceResponseHandler>()));
-    builder.Services.AddTransient<AuthorizedClient>((sp) => new AuthorizedClient(sp.GetRequiredService<IHttpClientFactory>().CreateClient(RocketLaunchJournal.Web.Shared.Constants.Identity.Scope), sp.GetRequiredService<ServiceResponseHandler>()));
+    builder.Services.AddTransient<AnonymousClient>();
+    builder.Services.AddTransient<AuthorizedClient>();
 
     builder.Services.AddApiAuthorization();
 
@@ -44,7 +36,7 @@ public class Program
 
     builder.Services.AddBlazoredToast();
     builder.Services.AddBlazoredModal();
-    
+
     builder.Services.AddScoped<ServiceResponseHandler>();
 
     await builder.Build().RunAsync();

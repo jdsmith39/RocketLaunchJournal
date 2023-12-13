@@ -1,10 +1,15 @@
+using Blazored.Modal;
+using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RocketLaunchJournal.Entities;
 using RocketLaunchJournal.Infrastructure.Services.Users;
 using RocketLaunchJournal.Infrastructure.UserIdentity;
 using RocketLaunchJournal.Model.UserIdentity;
+using RocketLaunchJournal.Web.Client.Helpers;
+using RocketLaunchJournal.Web.Client.Services;
 using RocketLaunchJournal.Web.Components;
 using RocketLaunchJournal.Web.Components.Account;
 using RocketLaunchJournal.Web.Shared.UserIdentity;
@@ -94,6 +99,17 @@ builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Adhoc.
 builder.Services.AddTransient<RocketLaunchJournal.Infrastructure.Services.Adhoc.AdhocGet>();
 builder.Services.AddTransient<UsersCreateUpdate>();
 builder.Services.AddTransient<UsersGet>();
+
+// Supply HttpClient instances that include access tokens when making requests to the server project
+builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri("https://localhost:7016/") });
+
+builder.Services.AddTransient<AnonymousClient>();
+builder.Services.AddTransient<AuthorizedClient>();
+
+builder.Services.AddScoped<ServiceResponseHandler>();
+
+builder.Services.AddBlazoredToast();
+builder.Services.AddBlazoredModal();
 
 var app = builder.Build();
 

@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using RocketLaunchJournal.Web.Shared.UserIdentity;
+using RocketLaunchJournal.Infrastructure.UserIdentity;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace RocketLaunchJournal.Web.Client
 {
@@ -23,7 +22,7 @@ namespace RocketLaunchJournal.Web.Client
 
     public PersistentAuthenticationStateProvider(PersistentComponentState state)
     {
-      if (!state.TryTakeFromJson<UserClaimBuilder>(nameof(UserClaimBuilder), out var userInfo) || userInfo is null)
+      if (!state.TryTakeFromJson<UserClaimModel>(nameof(UserClaimModel), out var userInfo) || userInfo is null)
       {
         return;
       }

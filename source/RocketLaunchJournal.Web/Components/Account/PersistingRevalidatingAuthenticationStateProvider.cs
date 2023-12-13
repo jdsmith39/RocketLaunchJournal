@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components.Server;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using RocketLaunchJournal.Infrastructure.UserIdentity;
 using RocketLaunchJournal.Model.UserIdentity;
 using RocketLaunchJournal.Web.Shared.UserIdentity;
 using System.Diagnostics;
@@ -91,7 +92,7 @@ namespace RocketLaunchJournal.Web.Components.Account
 
         if (userId != null && email != null)
         {
-          state.PersistAsJson(nameof(UserClaimBuilder), new UserClaimBuilder(principal));
+          state.PersistAsJson(nameof(UserClaimModel), new UserClaimBuilder(principal));
         }
       }
     }
