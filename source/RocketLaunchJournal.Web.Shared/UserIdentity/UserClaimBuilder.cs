@@ -1,6 +1,3 @@
-using IdentityModel;
-using RocketLaunchJournal.Infrastructure.Dtos;
-using RocketLaunchJournal.Infrastructure.Dtos.Users;
 using RocketLaunchJournal.Infrastructure.UserIdentity;
 using RocketLaunchJournal.Model.SerializedObjects;
 using RocketLaunchJournal.Model.UserIdentity;
@@ -9,166 +6,128 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
-namespace RocketLaunchJournal.Web.Shared.UserIdentity
+namespace RocketLaunchJournal.Web.Shared.UserIdentity;
+
+/// <summary>
+/// Builds the user claim model
+/// </summary>
+public class UserClaimBuilder : UserClaimModel
 {
-    /// <summary>
-    /// Builds the user claim model
-    /// </summary>
-    public class UserClaimBuilder : UserClaimModel
-    {
-        #region Claim Types
+  private ClaimsPrincipal? _userPrincipal;
+  private IEnumerable<Claim>? _claims;
 
-        public const string RoleDataClaimType = nameof(RoleData);
-        public const string IPAddressClaimType = nameof(IpAddress);
-        public const string OriginalSuffix = "Original";
+  /// <summary>
+  /// Constructs the UserClaimBuilder using the claimsPrincipal
+  /// </summary>
+  /// <param name="claimsUser">System.Security.Claims.ClaimsPrincipal</param>
+  public UserClaimBuilder(ClaimsPrincipal? claimsUser)
+  {
+    _userPrincipal = claimsUser;
+    if (claimsUser == null)
+      return;
 
-        #endregion
+    _claims = _userPrincipal!.Claims;
+    UserId = UserClaimInt(ClaimTypes.NameIdentifier);
+    UserIdOriginal = UserClaimInt(nameof(User.UserId) + OriginalSuffix);
+    Email = UserClaimString(ClaimTypes.Email);
+    FirstName = UserClaimString(ClaimTypes.GivenName);
+    LastName = UserClaimString(ClaimTypes.Surname);
+    IpAddress = UserClaimString(IPAddressClaimType);
 
-        private ClaimsPrincipal? _userPrincipal;
-        private IEnumerable<Claim>? _claims;
+    var roleDataString = UserClaimString(RoleDataClaimType);
+    if (!string.IsNullOrEmpty(roleDataString))
+      RoleData = roleDataString.DeserializeJson<RoleData>();
 
-        /// <summary>
-        /// Constructs the UserClaimBuilder using the claimsPrincipal
-        /// </summary>
-        /// <param name="claimsUser">System.Security.Claims.ClaimsPrincipal</param>
-        public UserClaimBuilder(System.Security.Claims.ClaimsPrincipal? claimsUser)
-        {
-            _userPrincipal = claimsUser;
-            if (claimsUser == null)
-                return;
-            
-            _claims = _userPrincipal!.Claims;
-            UserId = UserClaimInt(JwtClaimTypes.Subject);
-            UserIdOriginal = UserClaimInt(JwtClaimTypes.Subject + OriginalSuffix);
-            Email = UserClaimString(JwtClaimTypes.Email);
-            FirstName = UserClaimString(JwtClaimTypes.GivenName);
-            LastName = UserClaimString(JwtClaimTypes.FamilyName);
-            IpAddress = UserClaimString(IPAddressClaimType);
+    // roles
+    IsAdmin = _userPrincipal.IsInRole(Role.Admin);
 
-            var roleDataString = UserClaimString(RoleDataClaimType);
-            if (!string.IsNullOrEmpty(roleDataString))
-                RoleData = roleDataString.DeserializeJson<RoleData>();
+    // policies
+    SetupPolicies();
+  }
 
-            // roles
-            IsAdmin = _userPrincipal.IsInRole(Role.Admin);
+  /// <summary>
+  /// Generates additional claims for the passed in user for the SERVER
+  /// These claims the ones that identity server DOES NOT already create
+  /// 
+  /// Can setup impersonation if optional user is passed in.
+  /// </summary>
+  /// <param name="user">user to impersonate</param>
+  /// <param name="roles">user's roles</param>
+  /// <param name="ipAddress">user's ip Address</param>
+  /// <param name="userToImpersonate">user to impersonate</param>
+  /// <returns>claims list</returns>
+  public static List<Claim> GenerateClaimsServer(User user, IList<Role> roles, string ipAddress, User? userToImpersonate = null)
+  {
+    var claimsBasedOnUser = userToImpersonate ?? user;
+    var role = roles.OrderBy(o => o.Level).FirstOrDefault();
+    var claims = GenerateClaimsClient(user, userToImpersonate);
 
-            // policies
-            SetupPolicies();
-        }
+    if (ipAddress != null)
+      claims.Add(new Claim(IPAddressClaimType, ipAddress, ClaimValueTypes.String));
 
-        /// <summary>
-        /// Generates additional claims for the passed in user for the SERVER
-        /// These claims the ones that identity server DOES NOT already create
-        /// 
-        /// Can setup impersonation if optional user is passed in.
-        /// </summary>
-        /// <param name="user">user to impersonate</param>
-        /// <param name="roles">user's roles</param>
-        /// <param name="ipAddress">user's ip Address</param>
-        /// <param name="userToImpersonate">user to impersonate</param>
-        /// <returns>claims list</returns>
-        public static List<Claim> GenerateClaimsServer(User user, IList<Role> roles, string ipAddress, User? userToImpersonate = null)
-        {
-            var claimsBasedOnUser = userToImpersonate ?? user;
-            var role = roles.OrderBy(o => o.Level).FirstOrDefault();
-            var claims = GenerateClaimsClient(user, userToImpersonate);
+    if (role != null && role.Data != null)
+      claims.Add(new Claim(RoleDataClaimType, role.Data, ClaimValueTypes.String));
 
-            if (ipAddress != null)
-                claims.Add(new Claim(IPAddressClaimType, ipAddress, ClaimValueTypes.String));
+    return claims;
+  }
 
-            if (role != null && role.Data != null)
-                claims.Add(new Claim(RoleDataClaimType, role.Data, ClaimValueTypes.String));
+  /// <summary>
+  /// Generates additional claims for the passed in user for the CLIENT
+  /// These claims the ones that identity server DOES NOT already create
+  /// 
+  /// Can setup impersonation if optional user is passed in.
+  /// </summary>
+  /// <param name="user">user to impersonate</param>
+  /// <param name="userToImpersonate">user to impersonate</param>
+  /// <returns>claims list</returns>
+  public static List<Claim> GenerateClaimsClient(User user, User? userToImpersonate = null)
+  {
+    var claimsBasedOnUser = userToImpersonate ?? user;
+    var claims = new List<Claim>()
+          {
+              new Claim(nameof(User.UserId) + OriginalSuffix, user.UserId.ToString(), ClaimValueTypes.Integer),
+              new Claim(ClaimTypes.GivenName, claimsBasedOnUser.FirstName, ClaimValueTypes.String),
+              new Claim(ClaimTypes.Surname, claimsBasedOnUser.LastName, ClaimValueTypes.String),
+          };
 
-            return claims;
-        }
+    return claims;
+  }
 
-        /// <summary>
-        /// Generates additional claims for the passed in user for the CLIENT
-        /// These claims the ones that identity server DOES NOT already create
-        /// 
-        /// Can setup impersonation if optional user is passed in.
-        /// </summary>
-        /// <param name="user">user to impersonate</param>
-        /// <param name="userToImpersonate">user to impersonate</param>
-        /// <returns>claims list</returns>
-        public static List<Claim> GenerateClaimsClient(User user, User? userToImpersonate = null)
-        {
-            var claimsBasedOnUser = userToImpersonate ?? user;
-            var claims = new List<Claim>()
-            {
-                new Claim(JwtClaimTypes.Subject + OriginalSuffix, user.UserId.ToString(), ClaimValueTypes.Integer),
-                new Claim(JwtClaimTypes.GivenName, claimsBasedOnUser.FirstName, ClaimValueTypes.String),
-                new Claim(JwtClaimTypes.FamilyName, claimsBasedOnUser.LastName, ClaimValueTypes.String),
-            };
+  #region helpers
 
-            return claims;
-        }
+  private string UserClaimString(string claimToFind)
+  {
+    var claim = this._claims.FirstOrDefault(w => w.Type == claimToFind);
+    if (claim == null)
+      return "";
+    if (claim.ValueType != ClaimValueTypes.String)
+      throw new InvalidCastException($"User claim '{claimToFind}' is not of type String.");
 
-        /// <summary>
-        /// Impersonate an user by setting claims accordingly
-        /// </summary>
-        /// <param name="claims">current list of claims</param>
-        /// <param name="userDto">user to impersonate</param>
-        /// <returns>claims list</returns>
-        //public static List<Claim> ImpersonateUser(List<Claim> claims, UserDto userDto)
-        //{
-        //    var userIdClaim = claims.FirstOrDefault(w => w.Type == UserIdClaimType);
-        //    var emailClaim = claims.FirstOrDefault(w => w.Type == JwtRegisteredClaimNames.Sub);
-        //    var firstNameClaim = claims.FirstOrDefault(w => w.Type == JwtRegisteredClaimNames.GivenName);
-        //    var lastNameClaim = claims.FirstOrDefault(w => w.Type == JwtRegisteredClaimNames.FamilyName);
+    return claim.Value;
+  }
 
-        //    if (userIdClaim != null)
-        //        claims.Remove(userIdClaim);
-        //    if (emailClaim != null)
-        //        claims.Remove(emailClaim);
-        //    if (firstNameClaim != null)
-        //        claims.Remove(firstNameClaim);
-        //    if (lastNameClaim != null)
-        //        claims.Remove(lastNameClaim);
+  private int UserClaimInt(string claimToFind)
+  {
+    var claim = this._claims.FirstOrDefault(w => w.Type == claimToFind);
+    if (claim == null)
+      return -1;
+    if (!int.TryParse(claim.Value, out int value))
+      throw new InvalidCastException($"User claim '{claimToFind}' is not of type int.");
 
-        //    claims.Add(new Claim(UserIdClaimType, userDto.UserId.ToString(), ClaimValueTypes.Integer));
-        //    claims.Add(new Claim(JwtRegisteredClaimNames.Sub, userDto.Email, ClaimValueTypes.String));
-        //    claims.Add(new Claim(JwtRegisteredClaimNames.GivenName, userDto.FirstName, ClaimValueTypes.String));
-        //    claims.Add(new Claim(JwtRegisteredClaimNames.FamilyName, userDto.LastName, ClaimValueTypes.String));
+    return value;
+  }
 
-        //    return claims;
-        //}
+  private bool UserClaimBoolean(string claimToFind)
+  {
+    var claim = this._claims.FirstOrDefault(w => w.Type == claimToFind);
+    if (claim == null)
+      return false;
+    if (claim.ValueType != ClaimValueTypes.Boolean)
+      throw new InvalidCastException($"User claim '{claimToFind}' is not of type boolean.");
+    return bool.Parse(claim.Value);
+  }
 
-        #region helpers
-
-        private string UserClaimString(string claimToFind)
-        {
-            var claim = this._claims.FirstOrDefault(w => w.Type == claimToFind);
-            if (claim == null)
-                return "";
-            if (claim.ValueType != ClaimValueTypes.String)
-                throw new InvalidCastException($"User claim '{claimToFind}' is not of type String.");
-
-            return claim.Value;
-        }
-
-        private int UserClaimInt(string claimToFind)
-        {
-            var claim = this._claims.FirstOrDefault(w => w.Type == claimToFind);
-            if (claim == null)
-                return -1;
-            if (!int.TryParse(claim.Value, out int value))
-                throw new InvalidCastException($"User claim '{claimToFind}' is not of type int.");
-
-            return value;
-        }
-
-        private bool UserClaimBoolean(string claimToFind)
-        {
-            var claim = this._claims.FirstOrDefault(w => w.Type == claimToFind);
-            if (claim == null)
-                return false;
-            if (claim.ValueType != ClaimValueTypes.Boolean)
-                throw new InvalidCastException($"User claim '{claimToFind}' is not of type boolean.");
-            return bool.Parse(claim.Value);
-        }
-
-        #endregion
-    }
+  #endregion
 }
+
 

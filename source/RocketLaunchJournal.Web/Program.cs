@@ -1,7 +1,6 @@
 using Blazored.Modal;
 using Blazored.Toast;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using RocketLaunchJournal.Entities;
@@ -24,8 +23,8 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddControllers().AddJsonOptions((options) =>
 {
-  options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
-  options.JsonSerializerOptions.Converters.Add(new TextJsonSerializer.DBNullConverter());
+    options.JsonSerializerOptions.DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull;
+    options.JsonSerializerOptions.Converters.Add(new TextJsonSerializer.DBNullConverter());
 });
 
 builder.Services.AddCascadingAuthenticationState();
@@ -35,27 +34,27 @@ builder.Services.AddScoped<AuthenticationStateProvider, PersistingRevalidatingAu
 
 builder.Services.AddAuthentication(options =>
     {
-      options.DefaultScheme = IdentityConstants.ApplicationScheme;
-      options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+        options.DefaultScheme = IdentityConstants.ApplicationScheme;
+        options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
     })
     .AddIdentityCookies();
 
 builder.Services.AddIdentityCore<User>(options =>
 {
-  options.Lockout.AllowedForNewUsers = true;
-  options.Lockout.DefaultLockoutTimeSpan = new TimeSpan(0, 10, 0);
-  options.Lockout.MaxFailedAccessAttempts = 3;
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.DefaultLockoutTimeSpan = new TimeSpan(0, 10, 0);
+    options.Lockout.MaxFailedAccessAttempts = 3;
 
-  options.Password.RequireDigit = false;
-  options.Password.RequiredLength = RocketLaunchJournal.Model.Constants.FieldSizes.PasswordMinimumLength;
-  options.Password.RequiredUniqueChars = 0;
-  options.Password.RequireLowercase = true;
-  options.Password.RequireNonAlphanumeric = false;
-  options.Password.RequireUppercase = true;
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = RocketLaunchJournal.Model.Constants.FieldSizes.PasswordMinimumLength;
+    options.Password.RequiredUniqueChars = 0;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = true;
 
-  options.User.RequireUniqueEmail = true;
+    options.User.RequireUniqueEmail = true;
 
-  options.SignIn.RequireConfirmedEmail = true;
+    options.SignIn.RequireConfirmedEmail = true;
 }).AddRoles<Role>().AddUserStore<RocketLaunchJournal.Entities.UserIdentity.UserStore>().AddRoleStore<RocketLaunchJournal.Entities.UserIdentity.RoleStore>()
 .AddSignInManager().AddDefaultTokenProviders();
 
@@ -63,12 +62,12 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddAuthorization(config =>
 {
-  config.AddPolicy(PolicyNames.CanImpersonate, policy => policy.Requirements.Add(new CanImpersonate()));
-  config.AddPolicy(PolicyNames.LaunchAddEditDelete, policy => policy.Requirements.Add(new LaunchAddEditDelete()));
-  config.AddPolicy(PolicyNames.ReportAddEditDelete, policy => policy.Requirements.Add(new ReportAddEditDelete()));
-  config.AddPolicy(PolicyNames.RocketAddEditDelete, policy => policy.Requirements.Add(new RocketAddEditDelete()));
-  config.AddPolicy(PolicyNames.UserAddEditDelete, policy => policy.Requirements.Add(new UserAddEditDelete()));
-  config.AddPolicy(PolicyNames.UserProfileEdit, policy => policy.Requirements.Add(new UserProfileEdit()));
+    config.AddPolicy(PolicyNames.CanImpersonate, policy => policy.Requirements.Add(new CanImpersonateRequirement()));
+    config.AddPolicy(PolicyNames.LaunchAddEditDelete, policy => policy.Requirements.Add(new LaunchAddEditDeleteRequirement()));
+    config.AddPolicy(PolicyNames.ReportAddEditDelete, policy => policy.Requirements.Add(new ReportAddEditDeleteRequirement()));
+    config.AddPolicy(PolicyNames.RocketAddEditDelete, policy => policy.Requirements.Add(new RocketAddEditDeleteRequirement()));
+    config.AddPolicy(PolicyNames.UserAddEditDelete, policy => policy.Requirements.Add(new UserAddEditDeleteRequirement()));
+    config.AddPolicy(PolicyNames.UserProfileEdit, policy => policy.Requirements.Add(new UserProfileEditRequirement()));
 });
 
 //builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
@@ -78,10 +77,18 @@ builder.Services.AddTransient<Services.Email.IEmailer, Services.Email.Emailer>()
 
 builder.Services.AddScoped<UserPermissionService>((s) =>
 {
-  var contextAccessor = s.GetService<IHttpContextAccessor>();
-  var ups = new UserPermissionService();
-  ups.Setup(new UserClaimBuilder(contextAccessor!.HttpContext?.User));
-  return ups;
+    var httpContext = s.GetService<IHttpContextAccessor>();
+    string? ipAddress = null;
+    if (httpContext?.HttpContext?.Connection?.RemoteIpAddress != null)
+    {
+        if (httpContext.HttpContext.Connection.RemoteIpAddress.IsIPv4MappedToIPv6)
+            ipAddress = httpContext.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
+        else
+            ipAddress = httpContext.HttpContext.Connection.RemoteIpAddress.MapToIPv6().ToString();
+    }
+    var ups = new UserPermissionService(ipAddress);
+    ups.Setup(new UserClaimBuilder(httpContext!.HttpContext?.User));
+    return ups;
 });
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -116,14 +123,14 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-  app.UseWebAssemblyDebugging();
-  app.UseMigrationsEndPoint();
+    app.UseWebAssemblyDebugging();
+    app.UseMigrationsEndPoint();
 }
 else
 {
-  app.UseExceptionHandler("/Error", createScopeForErrors: true);
-  // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-  app.UseHsts();
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();

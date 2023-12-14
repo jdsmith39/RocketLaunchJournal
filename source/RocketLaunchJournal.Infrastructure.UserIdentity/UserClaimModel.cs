@@ -1,9 +1,20 @@
 using RocketLaunchJournal.Model.SerializedObjects;
+using RocketLaunchJournal.Model.UserIdentity;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace RocketLaunchJournal.Infrastructure.UserIdentity;
 
 public class UserClaimModel
 {
+  #region Claim Types
+
+  public const string RoleDataClaimType = nameof(RoleData);
+  public const string IPAddressClaimType = nameof(IpAddress);
+  public const string OriginalSuffix = "Original";
+
+  #endregion
+
   public bool IsAuthenticated { get { return UserId > 0; } }
 
   public int UserId { get; set; }
@@ -37,6 +48,26 @@ public class UserClaimModel
     UserPolicies.LaunchAddEditDelete = IsAuthenticated;
     // everyone can edit their own
     UserPolicies.ReportAddEditDelete = IsAuthenticated;
+  }
+
+  /// <summary>
+  /// Simplified claims for the client side.  
+  /// </summary>
+  /// <returns></returns>
+  public List<Claim> GenerateClaimsFromUserClaimModel()
+  {
+    var claims = new List<Claim>()
+    {
+        new Claim(ClaimTypes.NameIdentifier, UserId.ToString(), ClaimValueTypes.Integer),
+        new Claim(nameof(User.UserId) + OriginalSuffix, UserIdOriginal.ToString(), ClaimValueTypes.Integer),
+        new Claim(ClaimTypes.GivenName, FirstName, ClaimValueTypes.String),
+        new Claim(ClaimTypes.Surname, LastName, ClaimValueTypes.String),
+        new Claim(ClaimTypes.Email, Email, ClaimValueTypes.String),
+        new Claim(ClaimTypes.Name, Email, ClaimValueTypes.String),
+        new Claim(ClaimTypes.Role, IsAdmin ? "Admin" : "", ClaimValueTypes.String)
+    };
+
+    return claims;
   }
 }
 
