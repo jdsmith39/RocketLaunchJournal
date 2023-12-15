@@ -9,7 +9,7 @@
       <li class="nav-item dropdown">
         <button class="btn btn-link nav-link dropdown-toggle" @onclick="ToggleProfileMenu">@context.User.Identity.Name</button>
         <div class="dropdown-menu dropdown-menu-right @profileCss" aria-labelledby="profileLink">
-          <a class="dropdown-item" href="authentication/profile"><i class="fas fa-user fa-fw"></i> Profile</a>
+          <a class="dropdown-item" href="/Account/Manage"><i class="fas fa-user fa-fw"></i> Profile</a>
           <div class="dropdown-divider"></div>
           <button class="dropdown-item" @onclick="BeginSignOut"><i class="fas fa-sign-out-alt fa-fw"></i> Log out</button>
         </div>
@@ -25,7 +25,7 @@
 @code {
   private void BeginSignOut(MouseEventArgs args)
   {
-    Navigation.NavigateToLogout("authentication/logout");
+    Navigation.NavigateToLogout("/account/logout");
   }
 
   private bool collapseProfileMenu = true;

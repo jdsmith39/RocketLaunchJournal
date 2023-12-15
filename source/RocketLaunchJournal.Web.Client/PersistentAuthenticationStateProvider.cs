@@ -27,7 +27,6 @@ internal class PersistentAuthenticationStateProvider : AuthenticationStateProvid
       return;
     }
 
-    Console.WriteLine(userInfo.SerializeJson());
     authenticationStateTask = Task.FromResult(
         new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity(userInfo.GenerateClaimsFromUserClaimModel(),
             authenticationType: nameof(PersistentAuthenticationStateProvider)))));

@@ -1,5 +1,6 @@
 using Blazored.Modal;
 using Blazored.Toast;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -56,7 +57,7 @@ builder.Services.AddIdentityCore<User>(options =>
 
     options.SignIn.RequireConfirmedEmail = true;
 }).AddRoles<Role>().AddUserStore<RocketLaunchJournal.Entities.UserIdentity.UserStore>().AddRoleStore<RocketLaunchJournal.Entities.UserIdentity.RoleStore>()
-.AddSignInManager().AddDefaultTokenProviders();
+.AddSignInManager<CustomSignInManager>().AddDefaultTokenProviders();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -69,6 +70,12 @@ builder.Services.AddAuthorization(config =>
     config.AddPolicy(PolicyNames.UserAddEditDelete, policy => policy.Requirements.Add(new UserAddEditDeleteRequirement()));
     config.AddPolicy(PolicyNames.UserProfileEdit, policy => policy.Requirements.Add(new UserProfileEditRequirement()));
 });
+builder.Services.AddScoped<IAuthorizationHandler, CanImpersonate>();
+builder.Services.AddScoped<IAuthorizationHandler, LaunchAddEditDelete>();
+builder.Services.AddScoped<IAuthorizationHandler, ReportAddEditDelete>();
+builder.Services.AddScoped<IAuthorizationHandler, RocketAddEditDelete>();
+builder.Services.AddScoped<IAuthorizationHandler, UserAddEditDelete>();
+builder.Services.AddScoped<IAuthorizationHandler, UserProfileEdit>();
 
 //builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
 

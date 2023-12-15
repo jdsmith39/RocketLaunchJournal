@@ -1,5 +1,6 @@
 using Blazored.Modal;
 using Blazored.Toast;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using RocketLaunchJournal.Infrastructure.UserIdentity;
@@ -32,7 +33,14 @@ public class Program
             config.AddPolicy(PolicyNames.UserProfileEdit, policy => policy.Requirements.Add(new UserProfileEditRequirement()));
         });
 
-        builder.Services.AddScoped<UserPermissionService>((s) =>
+    builder.Services.AddScoped<IAuthorizationHandler, CanImpersonate>();
+    builder.Services.AddScoped<IAuthorizationHandler, LaunchAddEditDelete>();
+    builder.Services.AddScoped<IAuthorizationHandler, ReportAddEditDelete>();
+    builder.Services.AddScoped<IAuthorizationHandler, RocketAddEditDelete>();
+    builder.Services.AddScoped<IAuthorizationHandler, UserAddEditDelete>();
+    builder.Services.AddScoped<IAuthorizationHandler, UserProfileEdit>();
+
+    builder.Services.AddScoped<UserPermissionService>((s) =>
         {
             var ups = new UserPermissionService(null);
             return ups;

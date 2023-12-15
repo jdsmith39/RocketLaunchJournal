@@ -56,10 +56,10 @@ public class UserClaimBuilder : UserClaimModel
   /// <param name="ipAddress">user's ip Address</param>
   /// <param name="userToImpersonate">user to impersonate</param>
   /// <returns>claims list</returns>
-  public static List<Claim> GenerateClaimsServer(User user, IList<Role> roles, string ipAddress, User? userToImpersonate = null)
+  public static List<Claim> GenerateClaimsServer(User user, IList<Role>? roles, string? ipAddress, User? userToImpersonate = null)
   {
     var claimsBasedOnUser = userToImpersonate ?? user;
-    var role = roles.OrderBy(o => o.Level).FirstOrDefault();
+    var role = roles?.OrderBy(o => o.Level).FirstOrDefault();
     var claims = GenerateClaimsClient(user, userToImpersonate);
 
     if (ipAddress != null)
