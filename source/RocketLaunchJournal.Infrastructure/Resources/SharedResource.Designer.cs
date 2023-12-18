@@ -19,7 +19,7 @@ namespace RocketLaunchJournal.Infrastructure.Resources {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class SharedResource {
@@ -79,34 +79,7 @@ namespace RocketLaunchJournal.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Companies.
-        /// </summary>
-        public static string Companies {
-            get {
-                return ResourceManager.GetString("Companies", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Company Code.
-        /// </summary>
-        public static string CompanyCode {
-            get {
-                return ResourceManager.GetString("CompanyCode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Company Name.
-        /// </summary>
-        public static string CompanyName {
-            get {
-                return ResourceManager.GetString("CompanyName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;p&gt;Please click the Confirm Email button below to confrim your email address.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;{0}&quot; class=&quot;btn btn-primary&quot;&gt;Confirm Email&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;.
+        ///   Looks up a localized string similar to &lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;p&gt;Please click the Confirm Email button below to confirm your email address.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href=&quot;{0}&quot; class=&quot;btn btn-primary&quot;&gt;Confirm Email&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;.
         /// </summary>
         public static string ConfirmEmailMainContent {
             get {
@@ -115,7 +88,7 @@ namespace RocketLaunchJournal.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Michigan Team 1 Confirm Email.
+        ///   Looks up a localized string similar to Rocket Launch Journal Confirm Email.
         /// </summary>
         public static string ConfirmEmailSubject {
             get {
@@ -223,6 +196,15 @@ namespace RocketLaunchJournal.Infrastructure.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Please reset your password using the following code:  {0}..
+        /// </summary>
+        public static string PasswordResetCodeContent {
+            get {
+                return ResourceManager.GetString("PasswordResetCodeContent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please click the link below.  You will be taken to a page to reset your password.&lt;br&gt;&lt;br&gt; &lt;a href=&quot;{0}&quot; class=&quot;btn btn-primary&quot;&gt;Click here to change your password.&lt;/a&gt;.
         /// </summary>
         public static string PasswordSetupEmailMainContent {
@@ -232,29 +214,11 @@ namespace RocketLaunchJournal.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Michigan Team 1 Password Change Request.
+        ///   Looks up a localized string similar to Rocket Launch Journal Password Change Request.
         /// </summary>
         public static string PasswordSetupEmailSubject {
             get {
                 return ResourceManager.GetString("PasswordSetupEmailSubject", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to To create a password for your new account, please click &lt;a href=&quot;{0}&quot; class=&quot;btn btn-primary&quot;&gt;here&lt;/a&gt;..
-        /// </summary>
-        public static string PasswordSetupNewAccountEmailMainContent {
-            get {
-                return ResourceManager.GetString("PasswordSetupNewAccountEmailMainContent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Michigan Team 1 Account Setup.
-        /// </summary>
-        public static string PasswordSetupNewAccountEmailSubject {
-            get {
-                return ResourceManager.GetString("PasswordSetupNewAccountEmailSubject", resourceCulture);
             }
         }
         
@@ -286,7 +250,7 @@ namespace RocketLaunchJournal.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Michigan Team 1 Reset Password.
+        ///   Looks up a localized string similar to Rocket Launch Journal Reset Password.
         /// </summary>
         public static string ResetPasswordEmailSubject {
             get {
@@ -322,7 +286,7 @@ namespace RocketLaunchJournal.Infrastructure.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This email was sent to {0} by the Michigan Team 1 website.&lt;br/&gt;This email contains information from the Michigan Team 1 Rocket Club..
+        ///   Looks up a localized string similar to This email was sent to {0} by the Rocket Launch Journal website..
         /// </summary>
         public static string TemplateEmailFooter {
             get {

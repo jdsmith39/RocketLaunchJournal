@@ -28,6 +28,8 @@ builder.Services.AddControllers().AddJsonOptions((options) =>
     options.JsonSerializerOptions.Converters.Add(new TextJsonSerializer.DBNullConverter());
 });
 
+builder.Services.AddLocalization();
+builder.Services.AddOptions();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
@@ -77,10 +79,10 @@ builder.Services.AddScoped<IAuthorizationHandler, RocketAddEditDelete>();
 builder.Services.AddScoped<IAuthorizationHandler, UserAddEditDelete>();
 builder.Services.AddScoped<IAuthorizationHandler, UserProfileEdit>();
 
-//builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
+builder.Services.AddScoped<IEmailSender<User>, CustomEmailSender>();
 
 builder.Services.Configure<Services.Email.MailSettings>(builder.Configuration.GetSection(nameof(Services.Email.MailSettings)));
-builder.Services.AddTransient<Services.Email.IEmailer, Services.Email.Emailer>();
+builder.Services.AddScoped<Services.Email.IEmailer, Services.Email.Emailer>();
 
 builder.Services.AddScoped<UserPermissionService>((s) =>
 {

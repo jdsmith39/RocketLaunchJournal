@@ -123,20 +123,11 @@
   <data name="Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="Companies" xml:space="preserve">
-    <value>Companies</value>
-  </data>
-  <data name="CompanyCode" xml:space="preserve">
-    <value>Company Code</value>
-  </data>
-  <data name="CompanyName" xml:space="preserve">
-    <value>Company Name</value>
-  </data>
   <data name="ConfirmEmailMainContent" xml:space="preserve">
-    <value>&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;p&gt;Please click the Confirm Email button below to confrim your email address.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href="{0}" class="btn btn-primary"&gt;Confirm Email&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</value>
+    <value>&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;p&gt;Please click the Confirm Email button below to confirm your email address.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href="{0}" class="btn btn-primary"&gt;Confirm Email&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</value>
   </data>
   <data name="ConfirmEmailSubject" xml:space="preserve">
-    <value>Michigan Team 1 Confirm Email</value>
+    <value>Rocket Launch Journal Confirm Email</value>
   </data>
   <data name="ConfirmPassword" xml:space="preserve">
     <value>Confirm Password</value>
@@ -171,17 +162,14 @@
   <data name="Password" xml:space="preserve">
     <value>Password</value>
   </data>
+  <data name="PasswordResetCodeContent" xml:space="preserve">
+    <value>Please reset your password using the following code:  {0}.</value>
+  </data>
   <data name="PasswordSetupEmailMainContent" xml:space="preserve">
     <value>Please click the link below.  You will be taken to a page to reset your password.&lt;br&gt;&lt;br&gt; &lt;a href="{0}" class="btn btn-primary"&gt;Click here to change your password.&lt;/a&gt;</value>
   </data>
   <data name="PasswordSetupEmailSubject" xml:space="preserve">
-    <value>Michigan Team 1 Password Change Request</value>
-  </data>
-  <data name="PasswordSetupNewAccountEmailMainContent" xml:space="preserve">
-    <value>To create a password for your new account, please click &lt;a href="{0}" class="btn btn-primary"&gt;here&lt;/a&gt;.</value>
-  </data>
-  <data name="PasswordSetupNewAccountEmailSubject" xml:space="preserve">
-    <value>Michigan Team 1 Account Setup</value>
+    <value>Rocket Launch Journal Password Change Request</value>
   </data>
   <data name="Phone" xml:space="preserve">
     <value>Phone</value>
@@ -193,7 +181,7 @@
     <value>&lt;table&gt;&lt;tr&gt;&lt;td&gt;&lt;p&gt;We received a request to reset your password.  If you did not request this password reset, please contact an administrator.&lt;/p&gt;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;a href="{0}" class="btn btn-primary"&gt;Reset Password&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;</value>
   </data>
   <data name="ResetPasswordEmailSubject" xml:space="preserve">
-    <value>Michigan Team 1 Reset Password</value>
+    <value>Rocket Launch Journal Reset Password</value>
   </data>
   <data name="Role" xml:space="preserve">
     <value>Role</value>
@@ -205,7 +193,7 @@
     <value>Submit</value>
   </data>
   <data name="TemplateEmailFooter" xml:space="preserve">
-    <value>This email was sent to {0} by the Michigan Team 1 website.&lt;br/&gt;This email contains information from the Michigan Team 1 Rocket Club.</value>
+    <value>This email was sent to {0} by the Rocket Launch Journal website.</value>
   </data>
   <data name="Users" xml:space="preserve">
     <value>Users</value>
