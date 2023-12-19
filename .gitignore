@@ -244,3 +244,5 @@ _Pvt_Extensions
 /source/.vscode
 /source/NASTF.SDRM.Web.Site/package-lock.json
 /source/RocketLaunchJournal.Web/Server/tempkey.rsa
+/source/RocketLaunchJournal.Web/.config/dotnet-tools.json
+/source/RocketLaunchJournal.Web/.config/dotnet-tools.json

@@ -117,7 +117,8 @@ builder.Services.AddTransient<UsersCreateUpdate>();
 builder.Services.AddTransient<UsersGet>();
 
 // Supply HttpClient instances that include access tokens when making requests to the server project
-builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri("https://localhost:7016/") });
+var url = builder.Configuration.GetValue<string>("ApiUrl") ?? throw new InvalidOperationException("Missing API Url");
+builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(url) });
 
 builder.Services.AddTransient<AnonymousClient>();
 builder.Services.AddTransient<AuthorizedClient>();
