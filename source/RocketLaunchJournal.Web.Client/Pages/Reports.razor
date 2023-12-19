@@ -57,13 +57,13 @@ else
     </div>
     <div class="row gx-2 mb-2">
       <div class="col-12 col-sm-3">
-        <SmartishTable.Root @ref="SourceTable" SafeList="sourceColumns" HeaderTag="div">
+        <SmartishTable.Root @ref="SourceTable" SafeList="SourceColumns" HeaderTag="div">
           <ReportSourceColumnFilter Columns="Dto.Columns"></ReportSourceColumnFilter>
           <div class="card">
             <div class="card-header">
               <div class="row align-items-center">
                 <div class="col-12 col-sm-6">
-                  <SmartishTable.Sort Field="o => o.Name" IsDefaultSort="true" Css="canSelect">Columns (@sourceColumns?.Count)</SmartishTable.Sort>
+                  <SmartishTable.Sort Field="o => o.Name" IsDefaultSort="true" Css="canSelect">Columns (@SourceColumns?.Count)</SmartishTable.Sort>
                 </div>
                 <div class="col-12 col-sm-6">
                   <SmartishTable.FilterString SmartishTItem="ReportSourceColumnDto" Field="x => x.Name" Context="filterContext">
@@ -94,8 +94,8 @@ else
               <div class="row gx-2 align-items-center">
                 <div class="col-sm-auto">Name (@Dto?.Columns?.Count)</div>
                 <div class="col-sm text-sm-end">
-                  <button type="submit" class="btn btn-outline-info btn-sm me-2" @onclick="(() => GenerateReport() )"><span class="icon-x25">🗠</span> Show Report</button>
-                  <button type="submit" class="btn btn-info btn-sm" @onclick="(() =>DownloadReport() )"><span class="icon-x25">⭳</span> Download Report</button>
+                  <button type="button" class="btn btn-outline-info btn-sm me-2" @onclick="(() => GenerateReport() )"><span class="icon-x25">🗠</span> Show Report</button>
+                  <button type="button" class="btn btn-info btn-sm" @onclick="(() =>DownloadReport() )"><span class="icon-x25">⭳</span> Download Report</button>
                 </div>
               </div>
             </div>

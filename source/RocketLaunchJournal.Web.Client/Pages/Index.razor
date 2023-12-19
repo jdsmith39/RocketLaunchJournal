@@ -1,19 +1,20 @@
 ﻿@page "/"
 
-<div class="row">
-  <div class="col-sm-6">
-    <h3>Recent Launches</h3>
+<div>
+  <div class="row">
+    <div class="col-sm-6">
+      <h3>Recent Launches</h3>
+    </div>
+    <div class="col-sm-6 text-right">
+    </div>
   </div>
-  <div class="col-sm-6 text-right">
-  </div>
-</div>
 
-@if (list == null)
-{
+  @if (list == null)
+  {
   <p><em>Loading...</em></p>
-}
-else
-{
+  }
+  else
+  {
   <SmartishTable.Root SafeList="list" @ref="launchTable">
     <div class="row gx-2 gy-2">
       <SmartishTable.Repeater Context="row">
@@ -23,7 +24,8 @@ else
       </SmartishTable.Repeater>
     </div>
   </SmartishTable.Root>
-}
+  }
+</div>
 
 @inject IModalService ModalService
 @inject AnonymousClient anonymousClient

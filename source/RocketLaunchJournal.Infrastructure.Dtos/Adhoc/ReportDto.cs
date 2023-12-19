@@ -93,9 +93,8 @@ namespace RocketLaunchJournal.Infrastructure.Dtos.Adhoc
 
         public void Update(ReportDto dto, bool updateReportSource = true)
         {
-            var columns = dto.Columns != null ? dto.Columns.SerializeJson().DeserializeJson<List<ReportSourceColumnDto>>() : dto.Data!.DeserializeJson<List<ReportSourceColumnDto>>();
-            if (Columns == null)
-                Columns = new List<ReportSourceColumnDto>();
+            var columns = dto.Columns != null ? dto.Columns.SerializeJson().DeserializeJson<List<ReportSourceColumnDto>>()! : dto.Data!.DeserializeJson<List<ReportSourceColumnDto>>()!;
+
             Columns.Clear();
             Columns.AddRange(columns);
             IsShared = dto.IsShared;
