@@ -1,6 +1,3 @@
-using Duende.IdentityServer.EntityFramework.Entities;
-using Duende.IdentityServer.EntityFramework.Extensions;
-using Duende.IdentityServer.EntityFramework.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Logging;
@@ -18,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace RocketLaunchJournal.Entities
 {
-    public class DataContext : DbContext, ILoggingContext, IPersistedGrantDbContext
+  public class DataContext : DbContext, ILoggingContext
     {
         public DataContext(UserPermissionService ups, DbContextOptions<DataContext> options, ILogger<DataContext>? logger) : base(options)
         {
@@ -35,11 +32,6 @@ namespace RocketLaunchJournal.Entities
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // using defaults
-            modelBuilder.ConfigurePersistedGrantContext(new Duende.IdentityServer.EntityFramework.Options.OperationalStoreOptions() 
-            {
-            });
 
             // configure all decimal types to have the same precision.  Override after this line if necessary
             foreach (var property in modelBuilder.Model.GetEntityTypes()
@@ -81,18 +73,14 @@ namespace RocketLaunchJournal.Entities
         #region Tables
 
         public DbSet<APILog> APILogs { get; set; } = default!;
-        public DbSet<DeviceFlowCodes> DeviceFlowCodes { get; set; } = default!;
-        public DbSet<Key> Keys { get; set; } = default!;
         public DbSet<Launch> Launches { get; set; } = default!;
         public DbSet<LogType> LogTypes { get; set; } = default!;
-        public DbSet<PersistedGrant> PersistedGrants { get; set; } = default!;
         public DbSet<Rocket> Rockets { get; set; } = default!;
         public DbSet<RoleClaim> RoleClaims { get; set; } = default!;
         public DbSet<Role> Roles { get; set; } = default!;
         public DbSet<SystemLog> SystemLogs { get; set; } = default!;
         public DbSet<Model.UserIdentity.UserClaim> UserClaims { get; set; } = default!;
         public DbSet<UserLogin> UserLogins { get; set; } = default!;
-        public DbSet<UserRefreshToken> UserRefreshTokens { get; set; } = default!;
         public DbSet<UserRole> UserRoles { get; set; } = default!;
         public DbSet<User> Users { get; set; } = default!;
         public DbSet<UserToken> UserTokens { get; set; } = default!;

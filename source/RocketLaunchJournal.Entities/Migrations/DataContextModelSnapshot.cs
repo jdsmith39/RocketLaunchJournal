@@ -17,150 +17,43 @@ namespace RocketLaunchJournal.Entities.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.1")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
+            modelBuilder.Entity("RocketLaunchJournal.Model.APILog", b =>
                 {
-                    b.Property<string>("UserCode")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<long>("APILogId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
 
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("APILogId"));
 
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasMaxLength(50000)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("DeviceCode")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("Expiration")
-                        .IsRequired()
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SessionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SubjectId")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("UserCode");
-
-                    b.HasIndex("DeviceCode")
-                        .IsUnique();
-
-                    b.HasIndex("Expiration");
-
-                    b.ToTable("DeviceCodes", (string)null);
-                });
-
-            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.Key", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Algorithm")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("DataProtected")
+                    b.Property<bool>("IncomingRequest")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("IsX509Certificate")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Use")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Use");
-
-                    b.ToTable("Keys", (string)null);
-                });
-
-            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PersistedGrant", b =>
-                {
-                    b.Property<string>("Key")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("ClientId")
+                    b.Property<string>("RequestContentBlock")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("ConsumedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasMaxLength(50000)
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                    b.Property<string>("ResponseContentBlock")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("Expiration")
+                    b.Property<DateTime?>("ResponseDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("SessionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SubjectId")
+                    b.Property<string>("TargetURL")
+                        .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                    b.Property<DateTime>("TransmissionDateTime")
+                        .HasColumnType("datetime2");
 
-                    b.HasKey("Key");
+                    b.HasKey("APILogId");
 
-                    b.HasIndex("ConsumedTime");
-
-                    b.HasIndex("Expiration");
-
-                    b.HasIndex("SubjectId", "ClientId", "Type");
-
-                    b.HasIndex("SubjectId", "SessionId", "Type");
-
-                    b.ToTable("PersistedGrants", (string)null);
+                    b.ToTable("APILogs");
                 });
 
             modelBuilder.Entity("RocketLaunchJournal.Model.Adhoc.Report", b =>
@@ -169,7 +62,7 @@ namespace RocketLaunchJournal.Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReportId"));
 
                     b.Property<string>("Data")
                         .IsRequired()
@@ -219,47 +112,13 @@ namespace RocketLaunchJournal.Entities.Migrations
                     b.ToTable("ReportSources");
                 });
 
-            modelBuilder.Entity("RocketLaunchJournal.Model.APILog", b =>
-                {
-                    b.Property<long>("APILogId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("APILogId"), 1L, 1);
-
-                    b.Property<bool>("IncomingRequest")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("RequestContentBlock")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ResponseContentBlock")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ResponseDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("TargetURL")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("TransmissionDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("APILogId");
-
-                    b.ToTable("APILogs");
-                });
-
             modelBuilder.Entity("RocketLaunchJournal.Model.Launch", b =>
                 {
                     b.Property<int>("LaunchId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LaunchId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LaunchId"));
 
                     b.Property<decimal?>("Altitude")
                         .HasColumnType("decimal(18,2)");
@@ -336,7 +195,7 @@ namespace RocketLaunchJournal.Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RocketId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RocketId"));
 
                     b.Property<decimal?>("BlackPowderForApogee")
                         .HasColumnType("decimal(18,2)");
@@ -378,7 +237,7 @@ namespace RocketLaunchJournal.Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("LogId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("LogId"));
 
                     b.Property<DateTimeOffset>("EventDateTime")
                         .HasColumnType("datetimeoffset");
@@ -447,7 +306,7 @@ namespace RocketLaunchJournal.Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleClaimId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoleClaimId"));
 
                     b.Property<string>("ClaimType")
                         .IsRequired()
@@ -475,7 +334,7 @@ namespace RocketLaunchJournal.Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -561,7 +420,7 @@ namespace RocketLaunchJournal.Entities.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserClaimId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserClaimId"));
 
                     b.Property<string>("ClaimType")
                         .IsRequired()
@@ -606,30 +465,6 @@ namespace RocketLaunchJournal.Entities.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("UserLogins");
-                });
-
-            modelBuilder.Entity("RocketLaunchJournal.Model.UserIdentity.UserRefreshToken", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ExpiresOnDateTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("ImpersonationUserId")
-                        .IsRequired()
-                        .HasColumnType("int");
-
-                    b.Property<string>("RefreshToken")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("UserId");
-
-                    b.HasIndex("ImpersonationUserId");
-
-                    b.ToTable("UserRefreshTokens");
                 });
 
             modelBuilder.Entity("RocketLaunchJournal.Model.UserIdentity.UserRole", b =>
@@ -917,25 +752,6 @@ namespace RocketLaunchJournal.Entities.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("RocketLaunchJournal.Model.UserIdentity.UserRefreshToken", b =>
-                {
-                    b.HasOne("RocketLaunchJournal.Model.UserIdentity.User", "ImpersonationUser")
-                        .WithMany()
-                        .HasForeignKey("ImpersonationUserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("RocketLaunchJournal.Model.UserIdentity.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("ImpersonationUser");
 
                     b.Navigation("User");
                 });

@@ -1,16 +1,14 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using RocketLaunchJournal.DataSeed.Seeders;
 using RocketLaunchJournal.Entities;
 using RocketLaunchJournal.Infrastructure.UserIdentity;
-using RocketLaunchJournal.Model.Enums;
 using System;
 using System.Threading.Tasks;
 
 namespace RocketLaunchJournal.DataSeed
 {
-    class Program
+  class Program
     {
         async static Task Main(string[] args)
         {
@@ -31,7 +29,7 @@ namespace RocketLaunchJournal.DataSeed
 
             builder.UseSqlServer(configBuilder.GetConnectionString("DefaultConnection"));
 
-            var ups = new UserPermissionService();
+            var ups = new UserPermissionService("System");
             ups.Setup(new UserClaimBuilderTester());
             
             var context = new DataContext(ups, builder.Options, null);
