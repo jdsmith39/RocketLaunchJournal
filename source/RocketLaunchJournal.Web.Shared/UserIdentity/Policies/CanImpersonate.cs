@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using RocketLaunchJournal.Infrastructure.UserIdentity;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace RocketLaunchJournal.Web.Shared.UserIdentity.Policies;
 

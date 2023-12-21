@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using RocketLaunchJournal.Infrastructure.Services.Users;
 using RocketLaunchJournal.Model.UserIdentity;
 using RocketLaunchJournal.Web.Shared.UserIdentity;
 using System.Security.Claims;
@@ -10,7 +9,6 @@ namespace RocketLaunchJournal.Web.Components.Account;
 
 public class CustomSignInManager : SignInManager<User>
 {
-  private UsersGet UsersGet;
   public CustomSignInManager(UserManager<User> userManager,
         IHttpContextAccessor contextAccessor,
         IUserClaimsPrincipalFactory<User> claimsFactory,
