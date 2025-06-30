@@ -36,7 +36,7 @@ namespace RocketLaunchJournal.Infrastructure.Services.Adhoc
                 return response;
 
             var timestamp = DateTime.UtcNow;
-            Report dbObj;
+            Report? dbObj;
             var isNew = dto.ReportId == 0;
             if (isNew)
             {

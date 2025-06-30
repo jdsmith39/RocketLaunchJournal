@@ -17,9 +17,9 @@
               <EditSelect @bind-Value="Dto.RocketId" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.RocketId))" ValidationFor="(() => Dto.RocketId)">
                 <option value="0">Select...</option>
                 @foreach (var item in Rockets)
-          {
-          <option selected=@(Dto.RocketId == item.Value) value="@(item.Value)">@item.Text</option>
-  }
+                {
+                  <option selected=@(Dto.RocketId == item.Value) value="@(item.Value)">@item.Text</option>
+                }
               </EditSelect>
               <EditNumber @bind-Value="Dto.LaunchNumber" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.LaunchNumber))" ValidationFor="(() => Dto.LaunchNumber)" />
               <EditDate @bind-Value="Dto.Date" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Date))" ValidationFor="(() => Dto.Date)" />
@@ -40,7 +40,8 @@
                   <EditNumber @bind-Value="Dto.Duration" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Duration))" ValidationFor="(() => Dto.Duration)" LabelCss="@smallLabelCss" />
                 </div>
               </div>
-              
+
+              <EditText @bind-Value="Dto.RecoveryNotes" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.RecoveryNotes))" ValidationFor="(() => Dto.RecoveryNotes)" />
               <EditText @bind-Value="Dto.Note" PropertyInfo="PropertyReflections.GetLaunchDtoProperty(nameof(Dto.Note))" ValidationFor="(() => Dto.Note)" />
             </div>
           </div>
@@ -62,73 +63,73 @@
 
 @code {
 
-    [CascadingParameter]
-    private BlazoredModalInstance BlazoredModal { get; set; } = default!;
+  [CascadingParameter]
+  private BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
-    [Parameter]
-    public RocketLaunchJournal.Infrastructure.Dtos.LaunchDto DtoOriginal { get; set; } = default!;
+  [Parameter]
+  public RocketLaunchJournal.Infrastructure.Dtos.LaunchDto DtoOriginal { get; set; } = default!;
 
-    [Parameter]
-    public int? SelectedRocketId { get; set; }
+  [Parameter]
+  public int? SelectedRocketId { get; set; }
 
-    [Parameter]
-    public int InitialLaunchNumber { get; set; }
+  [Parameter]
+  public int InitialLaunchNumber { get; set; }
 
-    private RocketLaunchJournal.Infrastructure.Dtos.LaunchDto Dto { get; set; } = default!;
+  private RocketLaunchJournal.Infrastructure.Dtos.LaunchDto Dto { get; set; } = default!;
 
-    private EditContext _editContext = default!;
+  private EditContext _editContext = default!;
 
-    private List<RocketLaunchJournal.Infrastructure.Dtos.Helpers.SelectOptionDto<int>> Rockets = default!;
+  private List<RocketLaunchJournal.Infrastructure.Dtos.Helpers.SelectOptionDto<int>> Rockets = default!;
 
-    private string smallLabelCss = "col-sm-6";
+  private string smallLabelCss = "col-sm-6";
 
-    private bool dataUpdated
+  private bool dataUpdated
+  {
+    get
     {
-      get
+      return !Dto.Equals(DtoOriginal);
+    }
+  }
+
+  protected async override Task OnInitializedAsync()
+  {
+    if (DtoOriginal == null)
+    {
+      DtoOriginal = new Infrastructure.Dtos.LaunchDto()
       {
-        return !Dto.Equals(DtoOriginal);
-      }
+        IsActive = true,
+        IsUpdated = true,
+        Date = DateTime.Today,
+        RocketId = SelectedRocketId ?? 0,
+        LaunchNumber = InitialLaunchNumber,
+      };
     }
 
-    protected async override Task OnInitializedAsync()
+    Dto = DtoOriginal.SerializeJson().DeserializeJson<RocketLaunchJournal.Infrastructure.Dtos.LaunchDto>();
+
+    Rockets = await authorizedClient.GetRocketsForSelection();
+    if (Rockets == null)
+      Rockets = new List<Infrastructure.Dtos.Helpers.SelectOptionDto<int>>();
+
+    _editContext = new EditContext(Dto);
+  }
+
+  async Task Save()
+  {
+    Dto.IsUpdated = dataUpdated;
+
+    // update roleDto
+    var rocket = Rockets.FirstOrDefault(w => w.Value == Dto.RocketId);
+    if (rocket != null)
     {
-      if (DtoOriginal == null)
-      {
-        DtoOriginal = new Infrastructure.Dtos.LaunchDto()
-        {
-          IsActive = true,
-          IsUpdated = true,
-          Date = DateTime.Today,
-          RocketId = SelectedRocketId ?? 0,
-          LaunchNumber = InitialLaunchNumber,
-        };
-      }
-
-      Dto = DtoOriginal.SerializeJson().DeserializeJson<RocketLaunchJournal.Infrastructure.Dtos.LaunchDto>();
-
-      Rockets = await authorizedClient.GetRocketsForSelection();
-      if (Rockets == null)
-        Rockets = new List<Infrastructure.Dtos.Helpers.SelectOptionDto<int>>();
-
-      _editContext = new EditContext(Dto);
+      Dto.Name = rocket.Text;
     }
 
-    async Task Save()
+    if (Dto.IsUpdated)
     {
-      Dto.IsUpdated = dataUpdated;
-
-      // update roleDto
-      var rocket = Rockets.FirstOrDefault(w => w.Value == Dto.RocketId);
-      if (rocket != null)
-      {
-        Dto.Name = rocket.Text;
-      }
-
-      if (Dto.IsUpdated)
-      {
-        var data = await authorizedClient.SaveLaunch(Dto);
-        if (data != null)
-          await BlazoredModal.CloseAsync(ModalResult.Ok(data));
-      }
+      var data = await authorizedClient.SaveLaunch(Dto);
+      if (data != null)
+        await BlazoredModal.CloseAsync(ModalResult.Ok(data));
     }
+  }
 }

@@ -205,7 +205,7 @@ public partial class Reports : IDisposable
     if (!id.HasValue || reports == null)
       return;
 
-    reports.Remove(Dto);
+    reports = reports.Where(w => w.ReportId != id).ToList();
     SelectedReportId = 0;
   }
 

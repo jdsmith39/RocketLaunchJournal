@@ -26,7 +26,8 @@ namespace RocketLaunchJournal.Infrastructure.Dtos
                     && item.Date == Date && item.DescentSpeed == DescentSpeed && item.Duration == Duration
                     && item.EjectionAltitude == EjectionAltitude && item.IsActive == IsActive && item.LaunchId == LaunchId
                     && item.LaunchNumber == LaunchNumber && item.Motors == Motors && item.Name == Name && item.Note == Note
-                    && item.PeakAcceleration == PeakAcceleration && item.TopSpeed == TopSpeed;
+                    && item.PeakAcceleration == PeakAcceleration && item.TopSpeed == TopSpeed
+                    && item.RecoveryNotes == RecoveryNotes;
             }
 
             return false;

@@ -1,13 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using RocketLaunchJournal.Infrastructure.Dtos;
-using RocketLaunchJournal.Infrastructure.Dtos.Users;
-using RocketLaunchJournal.Infrastructure.UserIdentity;
+using RocketLaunchJournal.Infrastructure.Dtos.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using RocketLaunchJournal.Model.Enums;
-using System;
-using RocketLaunchJournal.Infrastructure.Dtos.Helpers;
 
 namespace RocketLaunchJournal.Infrastructure.Services.Rockets
 {
@@ -31,9 +28,13 @@ namespace RocketLaunchJournal.Infrastructure.Services.Rockets
                               Weight = x.Weight,
                               Diameter = x.Diameter,
                               Length = x.Length,
+                              CenterOfGravity = x.CenterOfGravity,
+                              CenterOfPreassure = x.CenterOfPreassure,
+                              TubeLengthForApogeeCharge = x.TubeLengthForApogeeCharge,
                               BlackPowderForApogee = x.BlackPowderForApogee,
+                              TubeLengthForMainCharge = x.TubeLengthForMainCharge,
                               BlackPowderForMain = x.BlackPowderForMain,
-                              //NumberOfLaunches = lastLaunch != null ? lastLaunch.LaunchNumber : 0,
+                              NumberOfLaunches = lastLaunch != null ? lastLaunch.LaunchNumber : 0,
                               LastLaunchDate = lastLaunch != null ? lastLaunch.Date : (DateTime?)null,
                               IsActive = !x.AuditFields!.InactiveDateTime.HasValue,
                           }).ToListAsync();

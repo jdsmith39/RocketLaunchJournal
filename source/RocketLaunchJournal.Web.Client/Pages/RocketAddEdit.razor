@@ -18,7 +18,11 @@
             <EditNumber @bind-Value="Dto.Diameter" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.Diameter))" ValidationFor="(() => Dto.Diameter)" />
             <EditNumber @bind-Value="Dto.Weight" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.Weight))" ValidationFor="(() => Dto.Weight)" />
             <EditText @bind-Value="Dto.Recovery" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.Recovery))" ValidationFor="(() => Dto.Recovery)" />
+            <EditNumber @bind-Value="Dto.CenterOfGravity" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.CenterOfGravity))" ValidationFor="(() => Dto.CenterOfGravity)" />
+            <EditNumber @bind-Value="Dto.CenterOfPreassure" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.CenterOfPreassure))" ValidationFor="(() => Dto.CenterOfPreassure)" />
+            <EditNumber @bind-Value="Dto.TubeLengthForApogeeCharge" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.TubeLengthForApogeeCharge))" ValidationFor="(() => Dto.TubeLengthForApogeeCharge)" />
             <EditNumber @bind-Value="Dto.BlackPowderForApogee" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.BlackPowderForApogee))" ValidationFor="(() => Dto.BlackPowderForApogee)" />
+            <EditNumber @bind-Value="Dto.TubeLengthForMainCharge" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.TubeLengthForMainCharge))" ValidationFor="(() => Dto.TubeLengthForMainCharge)" />
             <EditNumber @bind-Value="Dto.BlackPowderForMain" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.BlackPowderForMain))" ValidationFor="(() => Dto.BlackPowderForMain)" />
 
             <EditCheckbox @bind-Value="@Dto.IsActive" PropertyInfo="PropertyReflections.GetRocketDtoProperty(nameof(Dto.IsActive))" />

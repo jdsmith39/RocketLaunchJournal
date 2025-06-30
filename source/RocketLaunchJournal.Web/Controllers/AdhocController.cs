@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using RocketLaunchJournal.Infrastructure.Dtos.Adhoc;
 using RocketLaunchJournal.Infrastructure.Services.Adhoc;
+using RocketLaunchJournal.Web.Shared.UserIdentity.Policies;
+using System.Security.Cryptography;
 
 namespace RocketLaunchJournal.Web.Controllers;
 
@@ -26,6 +29,7 @@ public class AdhocController : BaseController
 
   [HttpPost("Report")]
   [HttpPut("Report")]
+  [Authorize(Policy = PolicyNames.ReportAddEditDelete)]
   [ProducesResponseType(typeof(ReportDto), (int)System.Net.HttpStatusCode.OK)]
   public async Task<IActionResult> SaveReport([FromBody] ReportDto dto)
   {
@@ -34,6 +38,7 @@ public class AdhocController : BaseController
   }
 
   [HttpDelete("Report/{id}")]
+  [Authorize(Policy = PolicyNames.ReportAddEditDelete)]
   [ProducesResponseType(typeof(List<ReportSourceDto>), (int)System.Net.HttpStatusCode.OK)]
   public async Task<IActionResult> DeleteReport(int id)
   {
