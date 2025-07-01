@@ -18,11 +18,9 @@ public class ReportSourceColumnDto
 
   public AggregateTypes Aggregate { get; set; }
 
-  public string? FilterGroup1 { get; set; }
+  public int? FilterOperator { get; set; }
 
-  public string? FilterGroup2 { get; set; }
-
-  public string? FilterGroup3 { get; set; }
+  public string? FilterGroup { get; set; }
 
   public override bool Equals(object obj)
   {
@@ -32,8 +30,7 @@ public class ReportSourceColumnDto
     if (obj is ReportSourceColumnDto item)
     {
       return Name == item.Name && item.TypeName == TypeName && item.InOutput == InOutput && SortOrder == item.SortOrder &&
-          item.Sort == Sort && Aggregate == item.Aggregate && FilterGroup1 == item.FilterGroup1 &&
-          FilterGroup2 == item.FilterGroup2 && FilterGroup3 == item.FilterGroup3;
+          item.Sort == Sort && Aggregate == item.Aggregate && FilterGroup == item.FilterGroup;
     }
 
     return false;

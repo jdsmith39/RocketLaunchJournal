@@ -77,8 +77,8 @@ else
                 <RowTemplate>
                   <div class="row align-items-center hover adhoc-row p-2">
                     <div class="col">
-                      <button type="button" class="btn btn-xs btn-outline-success" @onclick="(()=> AddColumn(row.Item, row.Index))"><span class="icon-x25">▶</span></button>
-                      @row.Item.Name - @row.Item.TypeName
+                      <button type="button" class="btn btn-xs btn-outline-success" @onclick="(() => AddColumn(row.Item, row.Index))"><span class="icon-x25">▶</span></button>
+                      @row.Item.Name
                     </div>
                   </div>
                 </RowTemplate>
@@ -94,8 +94,8 @@ else
               <div class="row gx-2 align-items-center">
                 <div class="col-sm-auto">Name (@Dto?.Columns?.Count)</div>
                 <div class="col-sm text-sm-end">
-                  <button type="button" class="btn btn-outline-info btn-sm me-2" @onclick="(() => GenerateReport() )"><span class="icon-x25">🗠</span> Show Report</button>
-                  <button type="button" class="btn btn-info btn-sm" @onclick="(() =>DownloadReport() )"><span class="icon-x25">⭳</span> Download Report</button>
+                  <button type="button" class="btn btn-outline-info btn-sm me-2" @onclick="(() => GenerateReport())"><span class="icon-x25">🗠</span> Show Report</button>
+                  <button type="button" class="btn btn-info btn-sm" @onclick="(() => DownloadReport())"><span class="icon-x25">⭳</span> Download Report</button>
                 </div>
               </div>
             </div>
@@ -109,7 +109,7 @@ else
                         {
                           <button class="btn btn-xs btn-outline-secondary" type="button" @onclick="(() => MoveUp(row.Item, row.Index))"><span class="icon-x25">▲</span></button>
                         }
-                        <button class="btn btn-xs btn-outline-danger" type="button" @onclick="(()=> RemoveColumn(row.Item, row.Index))"><span class="icon-x25">◀</span></button>
+                        <button class="btn btn-xs btn-outline-danger" type="button" @onclick="(() => RemoveColumn(row.Item, row.Index))"><span class="icon-x25">◀</span></button>
                         @if (row.Index < SelectedTable?.SafeList.Count - 1)
                         {
                           <button class="btn btn-xs btn-outline-secondary" type="button" @onclick="(() => MoveDown(row.Item, row.Index))"><span class="icon-x25">▼</span></button>
@@ -133,7 +133,7 @@ else
                             Sort
                           </label>
                           <InputSelect ValueExpression="@(() => row.Item.Sort)" Value="@row.Item.Sort" ValueChanged="@((SortTypes? value) => SortChanged(row.Item, value))"
-                                     class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(sortIdFormat, row.Index)">
+                                       class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(sortIdFormat, row.Index)">
                             <option value="">None</option>
                             @foreach (var item in sortTypes)
                             {
@@ -147,7 +147,7 @@ else
                             Sort Order
                           </label>
                           <InputSelect ValueExpression="@(() => row.Item.SortOrder)" Value="@row.Item.SortOrder" ValueChanged="@((int? value) => SortOrderChanged(row.Item, value))"
-                                     class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(sortOrderIdFormat, row.Index)">
+                                       class="form-select form-select-sm me-sm-2 w-auto d-inline" id="@string.Format(sortOrderIdFormat, row.Index)">
                             <option value="">None</option>
                             @foreach (var item in sortOrders)
                             {
@@ -175,8 +175,69 @@ else
                           </InputSelect>
                         </div>
                       </div>
-                      <div class="row gx-2">
-                        <div class="col-auto"><InputText @bind-Value="row.Item.FilterGroup1" class="form-control form-control-sm" placeholder="Filter Group 1" /></div>
+                      <div class="row mt-1 gx-2">
+
+                        @switch (row.Item.TypeName.ToLower())
+                        {
+                          case "string":
+                            <div class="col-auto">
+                              @if (!row.Item.FilterOperator.HasValue)
+                                row.Item.FilterOperator = (int) RocketLaunchJournal.Model.Enums.StringOperators.Contains;
+                              <select @bind="@row.Item.FilterOperator" class="form-select form-select-sm">
+                                @foreach (var enumItem in RocketLaunchJournal.Model.Enums.StringOperators.Equals.GetList())
+                                {
+                                  <option value="@((int)enumItem)">@enumItem.GetDisplayName()</option>
+                                }
+                              </select>
+                            </div>
+                            <div class="col-auto">
+                              <InputText @bind-Value=@row.Item.FilterGroup class="form-control form-control-sm" />
+                            </div>
+                            break;
+                          case "int":
+                          case "decimal":
+                          case "double":
+                            <div class="col-auto">
+                              @if (!row.Item.FilterOperator.HasValue)
+                                row.Item.FilterOperator = (int)RocketLaunchJournal.Model.Enums.NumericOperators.GreaterThan;
+                              <select @bind="@row.Item.FilterOperator" class="form-select form-select-sm">
+                                @foreach (var enumItem in RocketLaunchJournal.Model.Enums.NumericOperators.Equals.GetList())
+                                {
+                                  <option value="@((int)enumItem)">@enumItem.GetDisplayName()</option>
+                                }
+                              </select>
+                            </div>
+                            <div class="col-auto">
+                              <InputText @bind-Value=@row.Item.FilterGroup class="form-control form-control-sm" />
+                            </div>
+                            break;
+                          case "datetime":
+                            <div class="col-auto">
+                              @if (!row.Item.FilterOperator.HasValue)
+                                row.Item.FilterOperator = (int)RocketLaunchJournal.Model.Enums.DateTimeOperators.GreaterThan;
+                              <select @bind="@row.Item.FilterOperator" class="form-select form-select-sm">
+                                @foreach (var enumItem in RocketLaunchJournal.Model.Enums.DateTimeOperators.Equals.GetList())
+                                {
+                                  <option value="@((int)enumItem)">@enumItem.GetDisplayName()</option>
+                                }
+                              </select>
+                            </div>
+                            <div class="col-auto">
+                              <InputText @bind-Value=@row.Item.FilterGroup class="form-control form-control-sm" />
+                            </div>
+                            break;
+                          case "boolean":
+                            <div class="col-auto">
+                              <select @bind="row.Item.FilterOperator" class="form-select form-select-sm">
+                                <option value="">All</option>
+                                @foreach (var enumItem in RocketLaunchJournal.Model.Enums.BooleanOperators.IsTrue.GetList())
+                                {
+                                  <option value="@((int)enumItem)">@enumItem.GetDisplayName()</option>
+                                }
+                              </select>
+                            </div>
+                            break;
+                        }
                       </div>
                     </div>
                   </div>
@@ -195,9 +256,9 @@ else
       <div class="col-sm-6 text-sm-right">
         <AuthorizeView Policy="@RocketLaunchJournal.Web.Shared.UserIdentity.Policies.PolicyNames.ReportAddEditDelete">
           <Authorized Context="authorizedContext">
-            <button type="submit" class="btn btn-primary btn-sm me-2" @onclick="(() => Save() )"><span class="icon-x25">🖫</span> Save</button>
-            <button type="submit" class="btn btn-outline-primary btn-sm me-2" @onclick="(() =>SaveAs() )"><span class="icon-x25">🖫</span> Save As</button>
-            <button type="button" class="btn btn-danger btn-sm" @onclick="(() =>Delete() )"><span class="icon-x25">✖</span> Delete</button>
+            <button type="submit" class="btn btn-primary btn-sm me-2" @onclick="(() => Save())"><span class="icon-x25">🖫</span> Save</button>
+            <button type="submit" class="btn btn-outline-primary btn-sm me-2" @onclick="(() => SaveAs())"><span class="icon-x25">🖫</span> Save As</button>
+            <button type="button" class="btn btn-danger btn-sm" @onclick="(() => Delete())"><span class="icon-x25">✖</span> Delete</button>
           </Authorized>
         </AuthorizeView>
         <ValidationSummary />

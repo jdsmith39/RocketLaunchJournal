@@ -95,8 +95,6 @@ public class AdhocGet : BaseService
     if (reportSource == null)
       return null;
     var report = new ReportDataDto<object>();
-    //var columns = await GetReportSourceColumns(reportSource);
-    //report.RemovedColumns = CheckColumns(dto, columns);
     if (dto.Columns.Count == 0)
       return report;
 
@@ -106,6 +104,7 @@ public class AdhocGet : BaseService
     };
     SelectClause(query, dto);
     GroupByClause(query, dto);
+    WhereClause(query, dto);
     OrderByClause(query, dto);
     var compiler = new SqlServerCompiler();
     var result = compiler.Compile(query);
@@ -115,7 +114,8 @@ public class AdhocGet : BaseService
     if (!isOpen)
       await cmd.Connection.OpenAsync();
 
-    cmd.CommandText = result.RawSql;
+    cmd.CommandText = result.Sql;
+    cmd.Parameters.AddRange(result.NamedBindings.Select(s => new SqlParameter(s.Key, s.Value)).ToArray());
     var adapter = new SqlDataAdapter();
     adapter.SelectCommand = cmd;
     var dataSet = new DataSet();
@@ -146,21 +146,6 @@ public class AdhocGet : BaseService
     return fileDownload;
   }
 
-  private static List<string> CheckColumns(ReportDto dto, List<ReportSourceColumnDto> columns)
-  {
-    var removedList = new List<string>();
-    for (int i = dto.Columns.Count - 1; i >= 0; i--)
-    {
-      if (!columns.Any(w => w.Name == dto.Columns[i].Name))
-      {
-        removedList.Add(dto.Columns[i].Name);
-        dto.Columns.RemoveAt(i);
-      }
-    }
-
-    return removedList;
-  }
-
   private static void SelectClause(SqlKata.Query query, ReportDto dto)
   {
     foreach (var item in dto.Columns.Where(w => w.InOutput).GroupBy(g => g.Aggregate == AggregateTypes.GroupBy).Select(s => new { s.Key, Columns = s.ToList() }))
@@ -179,6 +164,103 @@ public class AdhocGet : BaseService
       return;
 
     query = query.GroupBy(dto.Columns.Where(w => w.Aggregate == AggregateTypes.GroupBy).Select(s => s.Name).ToArray());
+  }
+
+  private static void WhereClause(SqlKata.Query query, ReportDto dto)
+  {
+    foreach (var item in dto.Columns.Where(w=> w.FilterOperator.HasValue))
+    {
+      // nothing to do continue
+      if (item.TypeName.ToLower() != "boolean" && string.IsNullOrEmpty(item.FilterGroup))
+        continue;
+
+      switch (item.TypeName.ToLower())
+      {
+        case "string":
+          var stringOperator = (RocketLaunchJournal.Model.Enums.StringOperators)item.FilterOperator!.Value;
+          switch (stringOperator)
+          {
+            case Model.Enums.StringOperators.Contains:
+              query = query.WhereContains(item.ColumnName, item.FilterGroup);
+              break;
+            case Model.Enums.StringOperators.StartsWith:
+              query = query.WhereStarts(item.ColumnName, item.FilterGroup);
+              break;
+            case Model.Enums.StringOperators.EndsWith:
+              query = query.WhereEnds(item.ColumnName, item.FilterGroup);
+              break;
+            case Model.Enums.StringOperators.Equals:
+              query = query.Where(item.ColumnName, "=", item.FilterGroup);
+              break;
+            case Model.Enums.StringOperators.NotEquals:
+              query = query.Where(item.ColumnName, "!=", item.FilterGroup);
+              break;
+          }
+          break;
+        case "int":
+        case "decimal":
+        case "double":
+          var numericOperator = (RocketLaunchJournal.Model.Enums.NumericOperators)item.FilterOperator!.Value;
+          switch (numericOperator)
+          {
+            case Model.Enums.NumericOperators.Equals:
+              query = query.Where(item.ColumnName, "=", item.FilterGroup);
+              break;
+            case Model.Enums.NumericOperators.NotEquals:
+              query = query.Where(item.ColumnName, "!=", item.FilterGroup);
+              break;
+            case Model.Enums.NumericOperators.GreaterThan:
+              query = query.Where(item.ColumnName, ">", item.FilterGroup);
+              break;
+            case Model.Enums.NumericOperators.GreaterThanOrEqual:
+              query = query.Where(item.ColumnName, ">=", item.FilterGroup);
+              break;
+            case Model.Enums.NumericOperators.LessThan:
+              query = query.Where(item.ColumnName, "<", item.FilterGroup);
+              break;
+            case Model.Enums.NumericOperators.LessThanOrEqual:
+              query = query.Where(item.ColumnName, "<=", item.FilterGroup);
+              break;
+          }
+          break;
+        case "datetime":
+          var dateOperators = (RocketLaunchJournal.Model.Enums.DateTimeOperators)item.FilterOperator!.Value;
+          switch (dateOperators)
+          {
+            case Model.Enums.DateTimeOperators.Equals:
+              query = query.Where(item.ColumnName, "=", item.FilterGroup);
+              break;
+            case Model.Enums.DateTimeOperators.NotEquals:
+              query = query.Where(item.ColumnName, "!=", item.FilterGroup);
+              break;
+            case Model.Enums.DateTimeOperators.GreaterThan:
+              query = query.Where(item.ColumnName, ">", item.FilterGroup);
+              break;
+            case Model.Enums.DateTimeOperators.GreaterThanOrEqual:
+              query = query.Where(item.ColumnName, ">=", item.FilterGroup);
+              break;
+            case Model.Enums.DateTimeOperators.LessThan:
+              query = query.Where(item.ColumnName, "<", item.FilterGroup);
+              break;
+            case Model.Enums.DateTimeOperators.LessThanOrEqual:
+              query = query.Where(item.ColumnName, "<=", item.FilterGroup);
+              break;
+          }
+          break;
+        case "boolean":
+          var boolOperators = (RocketLaunchJournal.Model.Enums.BooleanOperators)item.FilterOperator!.Value;
+          switch (boolOperators)
+          {
+            case Model.Enums.BooleanOperators.IsTrue:
+              query = query.WhereTrue(item.ColumnName);
+              break;
+            case Model.Enums.BooleanOperators.IsFalse:
+              query = query.WhereFalse(item.ColumnName);
+              break;
+          }
+          break;
+      }
+    }
   }
 
   private static void OrderByClause(SqlKata.Query query, ReportDto dto)

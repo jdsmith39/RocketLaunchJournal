@@ -30,6 +30,7 @@ builder.Services.AddControllers().AddJsonOptions((options) =>
 
 builder.Services.AddLocalization();
 builder.Services.AddOptions();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
@@ -84,7 +85,7 @@ builder.Services.AddScoped<IEmailSender<User>, CustomEmailSender>();
 builder.Services.Configure<Services.Email.MailSettings>(builder.Configuration.GetSection(nameof(Services.Email.MailSettings)));
 builder.Services.AddScoped<Services.Email.IEmailer, Services.Email.Emailer>();
 
-builder.Services.AddScoped<UserPermissionService>((s) =>
+builder.Services.AddTransient<UserPermissionService>((s) =>
 {
     var httpContext = s.GetService<IHttpContextAccessor>();
     string? ipAddress = null;

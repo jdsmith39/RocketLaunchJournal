@@ -1,9 +1,6 @@
 using RocketLaunchJournal.Infrastructure.UserIdentity;
 using RocketLaunchJournal.Model.SerializedObjects;
 using RocketLaunchJournal.Model.UserIdentity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 
 namespace RocketLaunchJournal.Web.Shared.UserIdentity;
