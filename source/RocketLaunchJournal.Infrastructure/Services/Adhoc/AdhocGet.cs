@@ -197,7 +197,7 @@ public class AdhocGet : BaseService
               break;
           }
           break;
-        case "int":
+        case "int32":
         case "decimal":
         case "double":
           var numericOperator = (RocketLaunchJournal.Model.Enums.NumericOperators)item.FilterOperator!.Value;
