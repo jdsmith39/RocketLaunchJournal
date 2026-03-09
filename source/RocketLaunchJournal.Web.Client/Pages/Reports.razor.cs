@@ -26,10 +26,12 @@ public partial class Reports : IDisposable
 
   private EditContext editContext;
 
-  private SmartishTable.Root<ReportSourceColumnDto> SourceTable;
-  private SmartishTable.Root<ReportSourceColumnDto> SelectedTable;
-  private List<ReportSourceDto>? reportSources;
-  private List<ReportDto>? reports;
+  public SmartishTable.Root<ReportSourceColumnDto>? SourceTable;
+  public SmartishTable.Root<ReportSourceColumnDto>? SelectedTable;
+  [PersistentState]
+  public List<ReportSourceDto>? reportSources { get; set; }
+  [PersistentState]
+  public List<ReportDto>? reports { get; set; }
   private int selectedReportId;
   private int SelectedReportId
   {

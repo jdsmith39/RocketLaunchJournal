@@ -30,8 +30,8 @@
 @inject IModalService ModalService
 @inject AnonymousClient anonymousClient
 @code {
-
-  private List<LaunchDto>? list;
+  [PersistentState]
+  public List<LaunchDto>? list { get; set; }
 
   private SmartishTable.Root<LaunchDto> launchTable;
 

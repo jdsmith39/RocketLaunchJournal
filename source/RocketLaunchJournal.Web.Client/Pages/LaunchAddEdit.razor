@@ -63,23 +63,23 @@
 
 @code {
 
-  [CascadingParameter]
-  private BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    [CascadingParameter]
+    private BlazoredModalInstance BlazoredModal { get; set; } = default!;
 
-  [Parameter]
-  public RocketLaunchJournal.Infrastructure.Dtos.LaunchDto DtoOriginal { get; set; } = default!;
+    [Parameter]
+    public RocketLaunchJournal.Infrastructure.Dtos.LaunchDto DtoOriginal { get; set; } = default!;
 
-  [Parameter]
-  public int? SelectedRocketId { get; set; }
+    [Parameter]
+    public int? SelectedRocketId { get; set; }
 
-  [Parameter]
-  public int InitialLaunchNumber { get; set; }
+    [Parameter]
+    public int InitialLaunchNumber { get; set; }
 
   private RocketLaunchJournal.Infrastructure.Dtos.LaunchDto Dto { get; set; } = default!;
 
   private EditContext _editContext = default!;
 
-  private List<RocketLaunchJournal.Infrastructure.Dtos.Helpers.SelectOptionDto<int>> Rockets = default!;
+  public List<RocketLaunchJournal.Infrastructure.Dtos.Helpers.SelectOptionDto<int>> Rockets { get; set; } = default!;
 
   private string smallLabelCss = "col-sm-6";
 
@@ -105,7 +105,7 @@
       };
     }
 
-    Dto = DtoOriginal.SerializeJson().DeserializeJson<RocketLaunchJournal.Infrastructure.Dtos.LaunchDto>();
+    Dto = DtoOriginal!.SerializeJson().DeserializeJson<RocketLaunchJournal.Infrastructure.Dtos.LaunchDto>()!;
 
     Rockets = await authorizedClient.GetRocketsForSelection();
     if (Rockets == null)

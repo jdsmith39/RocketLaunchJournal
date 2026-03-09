@@ -50,15 +50,15 @@ else
 @inject AuthorizedClient authorizedClient
 @inject IModalService ModalService
 @code {
-  private List<RocketLaunchJournal.Infrastructure.Dtos.Users.UserDto> list;
+  [PersistentState]
+  public List<RocketLaunchJournal.Infrastructure.Dtos.Users.UserDto> list { get; set; }
 
-  private List<System.Reflection.PropertyInfo> dtoProperties;
+  private List<System.Reflection.PropertyInfo> dtoProperties = typeof(UserDto).GetProperties().ToList();
 
   private SmartishTable.Root<UserDto> table;
 
   protected override async Task OnInitializedAsync()
   {
-    dtoProperties = typeof(UserDto).GetProperties().ToList();
     list = await authorizedClient.GetUsers();
   }
 

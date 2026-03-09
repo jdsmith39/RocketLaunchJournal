@@ -14,9 +14,9 @@ namespace RocketLaunchJournal.Infrastructure.Services.Rockets
         /// Gets all rockets that the logged in user has access to.
         /// </summary>
         /// <param name="activeOnly">active only items</param>
-        public async Task<IEnumerable<RocketDto>> GetRockets(bool activeOnly)
+        public Task<List<RocketDto>> GetRockets(bool activeOnly)
         {
-            return await (from x in db.RocketsByFilter(UserPermissionService, activeOnly)
+            return (from x in db.RocketsByFilter(UserPermissionService, activeOnly)
                           let lastLaunch = db.Launches.OrderByDescending(o => o.Date).FirstOrDefault(w => w.RocketId == x.RocketId)
                           orderby x.Name
                           select new RocketDto()
@@ -44,9 +44,9 @@ namespace RocketLaunchJournal.Infrastructure.Services.Rockets
         /// Gets all rockets that the logged in user has access to.
         /// </summary>
         /// <param name="activeOnly">active only items</param>
-        public async Task<IEnumerable<SelectOptionDto<int>>> GetRocketsForSelection()
+        public Task<List<SelectOptionDto<int>>> GetRocketsForSelection()
         {
-            return await (from x in db.RocketsByFilter(UserPermissionService, false)
+            return (from x in db.RocketsByFilter(UserPermissionService, false)
                           orderby x.Name
                           select new SelectOptionDto<int>()
                           {

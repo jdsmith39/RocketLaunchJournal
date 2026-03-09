@@ -20,7 +20,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveWebAssemblyComponents()
+    .AddAuthenticationStateSerialization();
 
 builder.Services.AddControllers().AddJsonOptions((options) =>
 {
@@ -61,8 +62,6 @@ builder.Services.AddIdentityCore<User>(options =>
     options.SignIn.RequireConfirmedEmail = true;
 }).AddRoles<Role>().AddUserStore<RocketLaunchJournal.Entities.UserIdentity.UserStore>().AddRoleStore<RocketLaunchJournal.Entities.UserIdentity.RoleStore>()
 .AddSignInManager<CustomSignInManager>().AddDefaultTokenProviders();
-
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddAuthorization(config =>
 {
@@ -135,7 +134,6 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
-    app.UseMigrationsEndPoint();
 }
 else
 {
@@ -146,9 +144,9 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
 app.UseAntiforgery();
 
+app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()

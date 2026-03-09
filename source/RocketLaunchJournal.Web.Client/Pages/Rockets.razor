@@ -101,7 +101,8 @@
 @inject IModalService ModalService
 @inject AnonymousClient anonymousClient
 @code {
-  private List<RocketDto>? list;
+  [PersistentState]
+  public List<RocketDto>? list { get; set; }
 
   private List<LaunchDto>? launches = null;
 
