@@ -56,7 +56,7 @@ else
       </div>
     </div>
     <div class="row gx-2 mb-2">
-      <div class="col-12 col-sm-3">
+      <div class="col-12 col-sm-6 col-md-3 order-2 order-sm-1">
         <SmartishTable.Root @ref="SourceTable" SafeList="SourceColumns" HeaderTag="div">
           <ReportSourceColumnFilter Columns="Dto.Columns"></ReportSourceColumnFilter>
           <div class="card">
@@ -87,12 +87,12 @@ else
           </div>
         </SmartishTable.Root>
       </div>
-      <div class="col-12 col-sm-9">
+      <div class="col-12 col-sm-6 col-md-9 order-1 order-sm-2">
         <SmartishTable.Root @ref="SelectedTable" SafeList="Dto.Columns">
           <div class="card">
             <div class="card-header">
               <div class="row gx-2 align-items-center">
-                <div class="col-sm-auto">Name (@Dto?.Columns?.Count)</div>
+                <div class="col-sm-auto">Columns in Report (@Dto?.Columns?.Count)</div>
                 <div class="col-sm text-sm-end">
                   <button type="button" class="btn btn-outline-info btn-sm me-2" @onclick="(() => GenerateReport())"><span class="icon-x25">🗠</span> Show Report</button>
                   <button type="button" class="btn btn-info btn-sm" @onclick="(() => DownloadReport())"><span class="icon-x25">⭳</span> Download Report</button>
